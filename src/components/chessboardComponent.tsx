@@ -3,9 +3,9 @@ import {
     ChessboardComponentProps,
     ChessboardComponentState,
 } from "contexts/chessboardComponent";
+import {PieceColor} from "model/PieceColor";
 import React from "react";
 import {Table} from "react-bootstrap";
-import "styles/chessboard.scss";
 
 class ChessboardComponent extends React.Component<ChessboardComponentProps, ChessboardComponentState> {
     public render(): React.ReactNode {
@@ -16,9 +16,11 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
 
             for (let col = 0; col < this.props.chessboard.NB_COLS; ++col) {
                 cells.push((
-                    <td key={col} className={`td-${(row ^ col) % 2 ? "white" : "black"}`}>
-                        <PieceComponent piece={this.props.chessboard.getPiece(row, col)}/>
-                    </td>
+                    <PieceComponent
+                        key={col}
+                        color={(row ^ col) % 2 ? PieceColor.White : PieceColor.Black}
+                        piece={this.props.chessboard.getPiece(row, col)}
+                    />
                 ));
             }
 
@@ -34,6 +36,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                 className={"table text-center"}
                 bordered={true}
                 hover={true}
+                variant={"dark"}
             >
                 <tbody>
                     {rows}

@@ -1,21 +1,46 @@
-import {PieceComponentProps} from "contexts/pieceComponent";
+import {
+    PieceComponentProps,
+    PieceComponentState,
+} from "contexts/pieceComponent";
 import {PieceType} from "model/PieceType";
 import React from "react";
-import "styles/piece.scss";
+import "styles/pieceComponent.scss";
 
-class PieceComponent extends React.Component<PieceComponentProps, {}> {
+class PieceComponent extends React.Component<PieceComponentProps, PieceComponentState> {
+    public constructor(props: PieceComponentProps) {
+        super(props);
+
+        this.state = {
+            isActive: false,
+        };
+    }
+
     public render(): React.ReactNode {
-        if (this.props.piece.type === PieceType.Empty) {
-            return null;
-        } else {
-            return (
+        let content: React.ReactNode = null;
+
+        if (this.props.piece.type !== PieceType.Empty) {
+            content = (
                 <img
-                    className={"piece"}
-                    src={`/assets/pieces/${this.props.piece.color}/${this.props.piece.type}.png`}
+                    className={"piece-content"}
+                    src={`/assets/pieces/${this.props.piece.color}/${this.props.piece.type}.svg`}
                     alt={this.props.piece.getFEN()}
                 />
             );
         }
+
+        return (
+            <td
+                className={`piece-${this.props.color} ${this.state.isActive ? "piece-active" : null}`}
+                onMouseEnter={() => this.setState({
+                    isActive: true,
+                })}
+                onMouseLeave={() => this.setState({
+                    isActive: false,
+                })}
+            >
+                {content}
+            </td>
+        );
     }
 }
 
