@@ -20,9 +20,10 @@
     },
     "scripts": {
         "build": "react-scripts build",
-        "dev": "set REACT_PORT=3001 && concurrently -k \"set BROWSER=none && npm start\" \"npm:electron\"",
+        "dev": "set REACT_PORT=3001 && concurrently -k \"npm:react\" \"npm:electron\"",
         "eject": "react-scripts eject",
         "electron": "wait-on tcp:%REACT_PORT% && electron electron/main.js",
+        "react": "set BROWSER=none && npm start",
         "start": "set PORT=%REACT_PORT% && react-scripts start",
         "test": "react-scripts test"
     },
