@@ -13,7 +13,7 @@ function createWindow() {
         width: process.env.ELECTRON_INITIAL_WIDTH,
         height: process.env.ELECTRON_INITIAL_HEIGHT,
         webPreferences: {
-            nodeIntegration: true,
+            sandbox: true,
         },
     });
 
