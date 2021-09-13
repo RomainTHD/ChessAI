@@ -1,7 +1,7 @@
-class PieceColor {
-    public static readonly Black = new PieceColor("black");
-    public static readonly White = new PieceColor("white");
-    public static readonly Empty = new PieceColor(" ");
+class Color {
+    public static readonly Black = new Color("black");
+    public static readonly White = new Color("white");
+    public static readonly Empty = new Color(" ");
 
     private readonly _color: string;
 
@@ -18,4 +18,4 @@ class PieceColor {
     }
 }
 
-export {PieceColor};
+export {Color};

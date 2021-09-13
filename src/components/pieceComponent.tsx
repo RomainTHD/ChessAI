@@ -2,7 +2,7 @@ import {
     PieceComponentProps,
     PieceComponentState,
 } from "contexts/pieceComponent";
-import {PieceType} from "model/PieceType";
+import {Type} from "model/Type";
 import React from "react";
 import "styles/pieceComponent.scss";
 
@@ -18,7 +18,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
     public render(): React.ReactNode {
         let content: React.ReactNode = null;
 
-        if (this.props.piece.type !== PieceType.Empty) {
+        if (this.props.piece.type !== Type.Empty) {
             content = (
                 <img
                     className={"piece-content"}

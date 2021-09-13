@@ -1,12 +1,13 @@
 import {Piece} from "model/Piece";
-import {PieceColor} from "model/PieceColor";
-import {PieceType} from "model/PieceType";
+import {Color} from "model/Color";
+import {Type} from "model/Type";
+import {Position} from "model/Position";
 
 class Empty extends Piece {
-    public readonly type = PieceType.Empty;
+    public readonly type = Type.Empty;
 
     public constructor() {
-        super(PieceColor.Empty);
+        super(Color.Empty, new Position(NaN, NaN));
     }
 }
 

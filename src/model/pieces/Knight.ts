@@ -1,8 +1,8 @@
 import {Piece} from "model/Piece";
-import {PieceType} from "model/PieceType";
+import {Type} from "model/Type";
 
 class Knight extends Piece {
-    public readonly type = PieceType.Knight;
+    public readonly type = Type.Knight;
 }
 
 export {Knight};

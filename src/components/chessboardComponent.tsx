@@ -3,7 +3,7 @@ import {
     ChessboardComponentProps,
     ChessboardComponentState,
 } from "contexts/chessboardComponent";
-import {PieceColor} from "model/PieceColor";
+import {Color} from "model/Color";
 import React from "react";
 import {Table} from "react-bootstrap";
 
@@ -18,7 +18,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                 cells.push((
                     <PieceComponent
                         key={col}
-                        color={(row ^ col) % 2 ? PieceColor.White : PieceColor.Black}
+                        color={(row ^ col) % 2 ? Color.White : Color.Black}
                         piece={this.props.chessboard.getPiece(row, col)}
                     />
                 ));

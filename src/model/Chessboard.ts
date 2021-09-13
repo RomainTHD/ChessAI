@@ -1,5 +1,5 @@
 import {Piece} from "model/Piece";
-import {PieceColor} from "model/PieceColor";
+import {Color} from "model/Color";
 import {
     Bishop,
     Empty,
@@ -9,6 +9,7 @@ import {
     Queen,
     Rook,
 } from "model/pieces";
+import {Position} from "model/Position";
 
 class Chessboard {
     public readonly NB_ROWS = 8;
@@ -24,21 +25,22 @@ class Chessboard {
 
             for (let col = 0; col < this.NB_COLS; ++col) {
                 let piece: Piece = new Empty();
-                let color        = (row <= 1) ? PieceColor.White : PieceColor.Black;
+                let color        = (row <= 1) ? Color.White : Color.Black;
+                let pos          = new Position(row, col);
 
                 if (row === 1 || row === this.NB_ROWS - 2) {
-                    piece = new Pawn(color);
+                    piece = new Pawn(color, pos);
                 } else if (row === 0 || row === this.NB_ROWS - 1) {
                     if (col === 0 || col === this.NB_COLS - 1) {
-                        piece = new Rook(color);
+                        piece = new Rook(color, pos);
                     } else if (col === 1 || col === this.NB_COLS - 2) {
-                        piece = new Knight(color);
+                        piece = new Knight(color, pos);
                     } else if (col === 2 || col === this.NB_COLS - 3) {
-                        piece = new Bishop(color);
+                        piece = new Bishop(color, pos);
                     } else if (col === 3) {
-                        piece = new King(color);
+                        piece = new King(color, pos);
                     } else if (col === 4) {
-                        piece = new Queen(color);
+                        piece = new Queen(color, pos);
                     }
                 }
 
