@@ -1,0 +1,17 @@
+@import "./shared";
+
+.chessboard {
+    td {
+        &.td- {
+            &white {
+                color: $dark;
+                background: $light;
+            }
+
+            &black {
+                color: $light;
+                background: $black;
+            }
+        }
+    }
+}

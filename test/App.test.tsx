@@ -2,10 +2,10 @@ import {
     render,
     screen,
 } from "@testing-library/react";
-import {App} from "./App";
+import {Index} from "src/pages";
 
 test("TODO", () => {
-    render(<App/>);
+    render(<Index/>);
     const pElt = screen.getByText(/TODO/i);
     expect(pElt).toBeInTheDocument();
 });

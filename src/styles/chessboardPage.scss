@@ -1,0 +1,9 @@
+.chessboard {
+    font-size: calc(10px + 2vmin);
+
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

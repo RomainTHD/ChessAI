@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {App} from "./App";
-import "./index.css";
+import "styles/index.scss";
+import {Index} from "./pages";
 import {reportWebVitals} from "./reportWebVitals";
 
 ReactDOM.render(
     <React.StrictMode>
-        <App/>
+        <Index/>
     </React.StrictMode>,
     document.getElementById("root"),
 );
