@@ -11,6 +11,7 @@
         "@types/node": "^12.20.24",
         "@types/react": "^17.0.20",
         "@types/react-dom": "^17.0.9",
+        "dotenv": "^10.0.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-scripts": "4.0.3",
@@ -19,10 +20,10 @@
     },
     "scripts": {
         "build": "react-scripts build",
-        "dev": "concurrently -k \"set BROWSER=none && npm start\" \"npm:electron\"",
+        "dev": "set REACT_PORT=3001 && concurrently -k \"set BROWSER=none && npm start\" \"npm:electron\"",
         "eject": "react-scripts eject",
-        "electron": "wait-on tcp:3001 && electron electron/main.js",
-        "start": "set PORT=3001 && react-scripts start",
+        "electron": "wait-on tcp:%REACT_PORT% && electron electron/main.js",
+        "start": "set PORT=%REACT_PORT% && react-scripts start",
         "test": "react-scripts test"
     },
     "eslintConfig": {

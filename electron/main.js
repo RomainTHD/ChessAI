@@ -1,13 +1,17 @@
 const path = require("path");
 
+const dotEnv = require("dotenv");
+
+dotEnv.config();
+
 const {app, BrowserWindow} = require("electron");
 const isDev = require("electron-is-dev");
 
 function createWindow() {
     // Create the browser window
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: process.env.ELECTRON_INITIAL_WIDTH,
+        height: process.env.ELECTRON_INITIAL_HEIGHT,
         webPreferences: {
             nodeIntegration: true,
         },
@@ -17,7 +21,7 @@ function createWindow() {
     // win.loadFile("index.html");
     win.loadURL(
         isDev
-            ? "http://localhost:3001"
+            ? `http://localhost:${process.env.REACT_PORT}`
             : `file://${path.join(__dirname, "../build/index.html")}`,
     ).then();
 
