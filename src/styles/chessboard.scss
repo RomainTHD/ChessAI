@@ -2,6 +2,11 @@
 
 .chessboard {
     td {
+        width: 10vmin;
+        height: 10vmin;
+        text-align: center;
+        vertical-align: middle;
+
         &.td- {
             &white {
                 color: $dark;
