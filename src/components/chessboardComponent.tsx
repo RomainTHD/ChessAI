@@ -12,14 +12,14 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, {}> 
 
             for (let col = 0; col < this.props.chessboard.NB_COLS; ++col) {
                 cells.push((
-                    <td className={`td-${(row ^ col) % 2 ? "white" : "black"}`}>
+                    <td key={col} className={`td-${(row ^ col) % 2 ? "white" : "black"}`}>
                         {this.props.chessboard.getPiece(row, col).getFEN()}
                     </td>
                 ));
             }
 
             rows.push((
-                <tr>
+                <tr key={row}>
                     {cells}
                 </tr>
             ));
