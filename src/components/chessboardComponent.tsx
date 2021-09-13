@@ -18,7 +18,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                 cells.push((
                     <PieceComponent
                         key={col}
-                        color={(row ^ col) % 2 ? Color.White : Color.Black}
+                        backgroundColor={(row ^ col) % 2 ? Color.White : Color.Black}
                         piece={this.props.chessboard.getPiece(row, col)}
                     />
                 ));

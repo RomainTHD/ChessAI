@@ -1,40 +1,47 @@
 @import "./shared";
 
-@mixin active($color) {
-    box-shadow: inset 0 0 0 10px $color;
-    transition: all 0.25s;
+@mixin active($out-color, $in-color, $active) {
+    box-shadow: inset 0 0 10px 10px rgba($out-color, if($active, 1, 0)), inset 0 0 10px 15px rgba($in-color, if($active, 1, 0));
+    transition: all 0.2s;
+}
+
+@mixin piece-color($out-color, $in-color) {
+    background-color: $in-color;
+
+    // BEM convention
+    &.piece--active-true {
+        @include active($out-color, $in-color, true);
+    }
+
+    &.piece--active-false {
+        @include active($out-color, $in-color, false);
+    }
 }
 
 .chessboard {
-    td {
+    td.piece {
         height: 10vmin;
         text-align: center;
         vertical-align: middle;
         width: 10vmin;
 
-        img.piece-content {
+        &.piece--clickable {
+            cursor: pointer;
+        }
+
+        img.piece--content {
             max-height: 100%;
             max-width: 100%;
             transform: scale(1.5); // FIXME: Will probably break because all the SVGs have a fixed size inside
         }
 
-        &.piece- {
+        &.piece--color- {
             &white {
-                background-color: $orange-100;
-                color: $dark;
-
-                &.piece-active {
-                    @include active($orange-400);
-                }
+                @include piece-color($orange-400, $orange-100);
             }
 
             &black {
-                background-color: $orange-800;
-                color: $light;
-
-                &.piece-active {
-                    @include active($orange-700);
-                }
+                @include piece-color($orange-700, $orange-800);
             }
         }
     }

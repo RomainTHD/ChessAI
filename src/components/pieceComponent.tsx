@@ -2,6 +2,7 @@ import {
     PieceComponentProps,
     PieceComponentState,
 } from "contexts/pieceComponent";
+import {Color} from "model/Color";
 import {Type} from "model/Type";
 import React from "react";
 import "styles/pieceComponent.scss";
@@ -21,7 +22,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
         if (this.props.piece.type !== Type.Empty) {
             content = (
                 <img
-                    className={"piece-content"}
+                    className={"piece--content"}
                     src={`/assets/pieces/${this.props.piece.color}/${this.props.piece.type}.svg`}
                     alt={this.props.piece.getFEN()}
                 />
@@ -30,7 +31,12 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
 
         return (
             <td
-                className={`piece-${this.props.color} ${this.state.isActive ? "piece-active" : null}`}
+                className={
+                    "piece " +
+                    `${this.state.isActive && this.props.piece.color === Color.White ? "piece--clickable" : ""} ` +
+                    `piece--color-${this.props.backgroundColor} ` +
+                    `piece--active-${this.state.isActive}`
+                }
                 onMouseEnter={() => this.setState({
                     isActive: true,
                 })}

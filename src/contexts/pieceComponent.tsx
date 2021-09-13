@@ -3,7 +3,7 @@ import {Color} from "model/Color";
 
 interface PieceComponentProps {
     piece: Piece,
-    color: Color,
+    backgroundColor: Color,
 }
 
 interface PieceComponentState {
