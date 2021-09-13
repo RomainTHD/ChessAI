@@ -12,6 +12,10 @@ class PieceColor {
     public get color(): string {
         return this._color;
     }
+
+    public toString(): string {
+        return this.color;
+    }
 }
 
 export {PieceColor};

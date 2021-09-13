@@ -22,6 +22,10 @@ class PieceType {
     public get name(): string {
         return this._name;
     }
+
+    public toString(): string {
+        return this.name;
+    }
 }
 
 export {PieceType};

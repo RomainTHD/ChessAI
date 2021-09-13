@@ -4,4 +4,11 @@ interface ChessboardComponentProps {
     chessboard: Chessboard,
 }
 
-export type {ChessboardComponentProps};
+interface ChessboardComponentState {
+
+}
+
+export type {
+    ChessboardComponentProps,
+    ChessboardComponentState,
+};
