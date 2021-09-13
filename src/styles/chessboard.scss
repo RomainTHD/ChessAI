@@ -10,12 +10,12 @@
         &.td- {
             &white {
                 color: $dark;
-                background: $light;
+                background: $orange-100;
             }
 
             &black {
                 color: $light;
-                background: $black;
+                background: $orange-800;
             }
         }
     }
