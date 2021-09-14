@@ -1,15 +1,19 @@
 import {
     Color,
+    Move,
     Piece,
 } from "model";
 
 interface PieceComponentProps {
-    piece: Piece | null,
     backgroundColor: Color,
+    canBeOccupied: boolean,
+    canBeTaken: boolean,
+    onMovesSelected: (selectedMoves: Move[]) => void,
+    piece: Piece | null,
 }
 
 interface PieceComponentState {
-    isActive: boolean,
+    isHovered: boolean,
 }
 
 export type {

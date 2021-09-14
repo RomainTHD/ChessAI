@@ -1,25 +1,26 @@
 @import "./shared";
 
-@mixin active($out-color, $in-color, $active) {
-    box-shadow: inset 0 0 10px 10px rgba($out-color, if($active, 1, 0)), inset 0 0 10px 15px rgba($in-color, if($active, 1, 0));
-    transition: all 0.2s;
-}
-
-@mixin piece-color($out-color, $in-color) {
-    background-color: $in-color;
-
-    // BEM convention
-    &.piece--active-true {
-        @include active($out-color, $in-color, true);
-    }
-
-    &.piece--active-false {
-        @include active($out-color, $in-color, false);
-    }
-}
-
 .chessboard {
     td.piece {
+        @mixin inner-shadow($out-color, $in-color, $active, $occupied: false, $taken: false) {
+            box-shadow: (
+                    inset 0 0 10px 5px rgba($out-color, if($active, 1, 0)),
+                    inset 0 0 10px 15px rgba($in-color, if($active, 1, 0)),
+                    inset 0 0 80px 10px rgba($cyan-300, if($occupied, 1, 0)),
+                    inset 0 0 15px 10px rgba($red-500, if($taken, 1, 0)),
+            );
+            transition: all 0.2s;
+        }
+
+        @mixin piece-color($out-color, $in-color) {
+            background-color: $in-color;
+
+            // BEM convention
+            &.piece--active-true {
+                @include inner-shadow($out-color, $in-color, true);
+            }
+        }
+
         height: 10vmin;
         text-align: center;
         vertical-align: middle;
@@ -35,13 +36,29 @@
             transform: scale(1.5); // FIXME: Will probably break because all the SVGs have a fixed size inside
         }
 
-        &.piece--color- {
-            &white {
+        &.piece--occupation {
+            &-true {
+                @include inner-shadow(black, black, false, true);
+            }
+
+            &-false {
+                @include inner-shadow(black, black, false, false);
+            }
+        }
+
+        &.piece--taken {
+            &-true {
+                @include inner-shadow(black, black, false, false, true);
+            }
+        }
+
+        &.piece--color {
+            &-white {
                 @include piece-color($orange-400, $orange-100);
             }
 
-            &black {
-                @include piece-color($orange-700, $orange-800);
+            &-black {
+                @include piece-color($orange-600, $orange-800);
             }
         }
     }

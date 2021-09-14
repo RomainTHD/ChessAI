@@ -11,7 +11,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
         super(props);
 
         this.state = {
-            isActive: false,
+            isHovered: false,
         };
     }
 
@@ -32,15 +32,17 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
             <td
                 className={
                     "piece " +
-                    `${this.state.isActive && this.props.piece?.color === Color.White ? "piece--clickable" : ""} ` +
+                    `${this.state.isHovered && this.props.piece?.color === Color.White ? "piece--clickable" : ""} ` +
                     `piece--color-${this.props.backgroundColor} ` +
-                    `piece--active-${this.state.isActive}`
+                    `piece--active-${this.state.isHovered} ` +
+                    `piece--occupation-${this.props.canBeOccupied && !this.props.canBeTaken} ` +
+                    `piece--taken-${this.props.canBeTaken} `
                 }
                 onMouseEnter={() => this.setState({
-                    isActive: true,
+                    isHovered: true,
                 })}
                 onMouseLeave={() => this.setState({
-                    isActive: false,
+                    isHovered: false,
                 })}
                 onClick={() => {
                     if (this.props.piece !== null) {
@@ -55,7 +57,13 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
     }
 
     private _onMouseClick(): void {
-        console.log(this.props.piece?.getAvailableMoves());
+        if (!this.props.piece) {
+            return;
+        }
+
+        const moves = this.props.piece.getAvailableMoves();
+        console.log(moves);
+        this.props.onMovesSelected(moves);
     }
 }
 
