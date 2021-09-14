@@ -1,8 +1,17 @@
-import {Chessboard} from "model/Chessboard";
-import {Color} from "model/Color";
-import {Move} from "model/Move";
-import {Position} from "model/Position";
-import {Type} from "model/Type";
+import assert from "assert";
+import {
+    Bishop,
+    Chessboard,
+    Color,
+    King,
+    Knight,
+    Move,
+    Pawn,
+    Position,
+    Queen,
+    Rook,
+    Type,
+} from "model";
 
 abstract class Piece {
     public abstract readonly type: Type;
@@ -15,6 +24,42 @@ abstract class Piece {
         this.board    = board;
         this.color    = color;
         this.position = position;
+    }
+
+    public static createFromFEN(FEN: string, board: Chessboard, position: Position): Piece {
+        assert(/[bknpqr]/i.test(FEN), "Wrong FEN");
+
+        const color = /[bknpqr]/.test(FEN) ? Color.White : Color.Black;
+        let piece: Piece;
+
+        switch (FEN.toLowerCase()) {
+            case "b":
+                piece = new Bishop(board, color, position);
+                break;
+
+            case "k":
+                piece = new King(board, color, position);
+                break;
+
+            case "n":
+                piece = new Knight(board, color, position);
+                break;
+
+            case "p":
+            default:
+                piece = new Pawn(board, color, position);
+                break;
+
+            case "q":
+                piece = new Queen(board, color, position);
+                break;
+
+            case "r":
+                piece = new Rook(board, color, position);
+                break;
+        }
+
+        return piece;
     }
 
     public getFEN(): string {
