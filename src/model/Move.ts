@@ -6,7 +6,7 @@ class Move {
     public readonly col: number;
     public readonly rowOffset: number;
     public readonly colOffset: number;
-    public readonly kills: boolean;
+    public readonly pieceTaken: boolean;
 
     private constructor(
         parentPiece: Piece,
@@ -14,35 +14,40 @@ class Move {
         col: number,
         rowOffset: number,
         colOffset: number,
-        kills: boolean,
+        pieceTaken: boolean,
     ) {
         this.parentPiece = parentPiece;
         this.row         = row;
         this.col         = col;
         this.rowOffset   = rowOffset;
         this.colOffset   = colOffset;
-        this.kills       = kills;
+        this.pieceTaken  = pieceTaken;
     }
 
-    public static fromOffset(parentPiece: Piece, rowOffset: number, colOffset: number, kills = false): Move {
+    public static fromOffset(
+        parentPiece: Piece,
+        rowOffset: number,
+        colOffset: number,
+        pieceTaken = false,
+    ): Move {
         return new Move(
             parentPiece,
             parentPiece.position.row + rowOffset,
             parentPiece.position.col + colOffset,
             rowOffset,
             colOffset,
-            kills,
+            pieceTaken,
         );
     }
 
-    public static fromPosition(parentPiece: Piece, row: number, col: number, kills = false): Move {
+    public static fromPosition(parentPiece: Piece, row: number, col: number, pieceTaken = false): Move {
         return new Move(
             parentPiece,
             row,
             col,
             row - parentPiece.position.row,
             col - parentPiece.position.col,
-            kills,
+            pieceTaken,
         );
     }
 }
