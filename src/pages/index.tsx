@@ -2,7 +2,7 @@ import React from "react";
 import {ChessboardPage} from "./chessboardPage";
 
 class Index extends React.Component<{}, {}> {
-    public render(): JSX.Element {
+    public override render(): JSX.Element {
         return <ChessboardPage/>;
     }
 }

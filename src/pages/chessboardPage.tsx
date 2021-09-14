@@ -4,7 +4,7 @@ import React from "react";
 import "styles/chessboardPage.scss";
 
 class ChessboardPage extends React.Component<{}, {}> {
-    public render(): React.ReactNode {
+    public override render(): React.ReactNode {
         return (
             <div className="chessboard">
                 <div className="row justify-content-center">

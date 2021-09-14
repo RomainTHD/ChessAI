@@ -21,6 +21,7 @@ class Move {
         this.col         = col;
         this.rowOffset   = rowOffset;
         this.colOffset   = colOffset;
+        this.kills       = kills;
     }
 
     public static fromOffset(parentPiece: Piece, rowOffset: number, colOffset: number, kills = false): Move {

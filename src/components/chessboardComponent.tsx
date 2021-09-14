@@ -8,7 +8,7 @@ import React from "react";
 import {Table} from "react-bootstrap";
 
 class ChessboardComponent extends React.Component<ChessboardComponentProps, ChessboardComponentState> {
-    public render(): React.ReactNode {
+    public override render(): React.ReactNode {
         const rows: JSX.Element[] = [];
 
         for (let row = this.props.chessboard.NB_ROWS - 1; row >= 0; --row) {
