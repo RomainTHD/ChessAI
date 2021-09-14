@@ -76,6 +76,17 @@ abstract class Piece {
         return FEN;
     }
 
+    protected _addMoveIfAvailable(position: Position, moves: Move[]): void {
+        if (this.board.isValidPosition(position)) {
+            const target = this.board.getPiece(position);
+            if (target === null) {
+                moves.push(Move.fromPosition(this, position));
+            } else if (target.color !== this.color) {
+                moves.push(Move.fromPosition(this, position, true));
+            }
+        }
+    }
+
     public abstract getAvailableMoves(): Move[];
 }
 
