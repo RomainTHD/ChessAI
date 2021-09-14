@@ -1,5 +1,5 @@
-import {Piece} from "model/Piece";
 import {Color} from "model/Color";
+import {Piece} from "model/Piece";
 import {
     Bishop,
     King,
@@ -20,12 +20,12 @@ class Chessboard {
         this._board = [];
 
         for (let row = 0; row < this.NB_ROWS; ++row) {
-            const currentRow: (Piece | null)[] = [];
+            const currentRow = [] as (Piece | null)[];
 
             for (let col = 0; col < this.NB_COLS; ++col) {
-                let piece: Piece | null = null;
-                let color               = (row <= 1) ? Color.White : Color.Black;
-                let pos                 = new Position(row, col);
+                let piece = null as Piece | null;
+                let color = (row <= 1) ? Color.White : Color.Black;
+                let pos   = new Position(row, col);
 
                 if (row === 1 || row === this.NB_ROWS - 2) {
                     piece = new Pawn(this, color, pos);

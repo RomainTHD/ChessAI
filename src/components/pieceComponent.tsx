@@ -16,7 +16,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
     }
 
     public override render(): React.ReactNode {
-        let content: React.ReactNode = null;
+        let content = null as React.ReactNode;
 
         if (this.props.piece !== null) {
             content = (

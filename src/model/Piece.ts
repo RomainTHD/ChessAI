@@ -1,8 +1,8 @@
 import {Chessboard} from "model/Chessboard";
 import {Color} from "model/Color";
 import {Move} from "model/Move";
-import {Type} from "model/Type";
 import {Position} from "model/Position";
+import {Type} from "model/Type";
 
 abstract class Piece {
     public abstract readonly type: Type;
@@ -18,7 +18,7 @@ abstract class Piece {
     }
 
     public getFEN(): string {
-        let FEN: string = this.type.FEN;
+        let FEN = this.type.FEN;
 
         if (this.color === Color.White) {
             FEN = FEN.toUpperCase();

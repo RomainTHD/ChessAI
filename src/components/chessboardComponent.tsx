@@ -9,10 +9,10 @@ import {Table} from "react-bootstrap";
 
 class ChessboardComponent extends React.Component<ChessboardComponentProps, ChessboardComponentState> {
     public override render(): React.ReactNode {
-        const rows: JSX.Element[] = [];
+        const rows = [] as JSX.Element[];
 
         for (let row = this.props.chessboard.NB_ROWS - 1; row >= 0; --row) {
-            const cells: JSX.Element[] = [];
+            const cells = [] as JSX.Element[];
 
             for (let col = 0; col < this.props.chessboard.NB_COLS; ++col) {
                 cells.push((
