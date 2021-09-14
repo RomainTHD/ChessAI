@@ -2,7 +2,7 @@ import {
     PieceComponentProps,
     PieceComponentState,
 } from "contexts/pieceComponent";
-import {Color} from "model/Color";
+import {Color} from "model";
 import React from "react";
 import "styles/pieceComponent.scss";
 

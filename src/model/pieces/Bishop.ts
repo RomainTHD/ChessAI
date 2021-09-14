@@ -1,6 +1,8 @@
-import {Move} from "model/Move";
-import {Piece} from "model/Piece";
-import {Type} from "model/Type";
+import {
+    Move,
+    Piece,
+    Type,
+} from "model";
 
 class Bishop extends Piece {
     public readonly type = Type.Bishop;

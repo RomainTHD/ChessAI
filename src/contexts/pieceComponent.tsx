@@ -1,5 +1,7 @@
-import {Piece} from "model/Piece";
-import {Color} from "model/Color";
+import {
+    Color,
+    Piece,
+} from "model";
 
 interface PieceComponentProps {
     piece: Piece | null,

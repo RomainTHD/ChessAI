@@ -1,4 +1,4 @@
-import {Piece} from "model/Piece";
+import {Piece} from "model";
 
 class Move {
     public readonly parentPiece: Piece;

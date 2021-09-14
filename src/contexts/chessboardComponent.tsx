@@ -1,4 +1,4 @@
-import {Chessboard} from "model/Chessboard";
+import {Chessboard} from "model";
 
 interface ChessboardComponentProps {
     chessboard: Chessboard,

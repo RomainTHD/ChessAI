@@ -3,7 +3,7 @@ import {
     ChessboardComponentProps,
     ChessboardComponentState,
 } from "contexts/chessboardComponent";
-import {Color} from "model/Color";
+import {Color} from "model";
 import React from "react";
 import {Table} from "react-bootstrap";
 

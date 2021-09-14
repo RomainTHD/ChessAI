@@ -1,5 +1,5 @@
 import {ChessboardComponent} from "components/chessboardComponent";
-import {Chessboard} from "model/Chessboard";
+import {Chessboard} from "model";
 import React from "react";
 import "styles/chessboardPage.scss";
 
