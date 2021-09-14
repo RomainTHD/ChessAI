@@ -1,7 +1,6 @@
 class Color {
     public static readonly Black = new Color("black");
     public static readonly White = new Color("white");
-    public static readonly Empty = new Color(" ");
 
     private readonly _color: string;
 

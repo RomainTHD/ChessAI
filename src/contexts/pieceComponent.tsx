@@ -2,7 +2,7 @@ import {Piece} from "model/Piece";
 import {Color} from "model/Color";
 
 interface PieceComponentProps {
-    piece: Piece,
+    piece: Piece | null,
     backgroundColor: Color,
 }
 

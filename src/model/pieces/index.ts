@@ -4,5 +4,3 @@ export {Knight} from "./Knight";
 export {Pawn} from "./Pawn";
 export {Queen} from "./Queen";
 export {Rook} from "./Rook";
-
-export {Empty} from "./Empty";

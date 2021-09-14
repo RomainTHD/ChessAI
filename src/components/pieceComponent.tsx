@@ -3,7 +3,6 @@ import {
     PieceComponentState,
 } from "contexts/pieceComponent";
 import {Color} from "model/Color";
-import {Type} from "model/Type";
 import React from "react";
 import "styles/pieceComponent.scss";
 
@@ -19,7 +18,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
     public render(): React.ReactNode {
         let content: React.ReactNode = null;
 
-        if (this.props.piece.type !== Type.Empty) {
+        if (this.props.piece !== null) {
             content = (
                 <img
                     className={"piece--content"}
@@ -33,7 +32,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
             <td
                 className={
                     "piece " +
-                    `${this.state.isActive && this.props.piece.color === Color.White ? "piece--clickable" : ""} ` +
+                    `${this.state.isActive && this.props.piece?.color === Color.White ? "piece--clickable" : ""} ` +
                     `piece--color-${this.props.backgroundColor} ` +
                     `piece--active-${this.state.isActive}`
                 }
@@ -43,10 +42,20 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
                 onMouseLeave={() => this.setState({
                     isActive: false,
                 })}
+                onClick={() => {
+                    if (this.props.piece !== null) {
+                        // FIXME: Also work for the other player
+                        this._onMouseClick();
+                    }
+                }}
             >
                 {content}
             </td>
         );
+    }
+
+    private _onMouseClick(): void {
+        console.log(this.props.piece?.getAvailableMoves());
     }
 }
 
