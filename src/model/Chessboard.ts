@@ -1,5 +1,6 @@
 import assert from "assert";
 import {
+    Color,
     Piece,
     Position,
 } from "model";
@@ -7,7 +8,6 @@ import {
 class Chessboard {
     public readonly NB_ROWS = 8;
     public readonly NB_COLS = 8;
-
     private readonly _board: (Piece | null)[][];
 
     public constructor(FEN: string = "") {
@@ -27,18 +27,25 @@ class Chessboard {
             FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         }
 
-        this._fillFromFEN(FEN);
+        this._initializeFromFEN(FEN);
+    }
+
+    // @ts-ignore
+    private _activeColor: Color;
+
+    public get activeColor(): Color {
+        return this._activeColor;
     }
 
     public getPiece(row: number, col: number): Piece | null {
         return this._board[row][col];
     }
 
-    private _fillFromFEN(FEN: string) {
-        const subFEN = FEN.split(" ");
-        assert(subFEN.length === 6, "Invalid FEN length");
+    private _initializeFromFEN(FENstr: string) {
+        const FEN = FENstr.split(" ");
+        assert(FEN.length === 6, "Invalid FEN length");
 
-        const rowsFEN = subFEN[0].split("/");
+        const rowsFEN = FEN[0].split("/");
         assert(rowsFEN.length === this.NB_ROWS, "Invalid FEN pieces length");
 
         for (let row = 0; row < this.NB_ROWS; ++row) {
@@ -52,8 +59,15 @@ class Chessboard {
                 }
             }
         }
+
+        if (FEN[1] === "b") {
+            this._activeColor = Color.Black;
+        } else if (FEN[1] === "w") {
+            this._activeColor = Color.White;
+        } else {
+            throw new Error("Invalid FEN active color");
+        }
     }
 }
-
 
 export {Chessboard};
