@@ -45,8 +45,8 @@ class Chessboard {
         return position.row >= 0 && position.row < this.NB_ROWS && position.col >= 0 && position.col < this.NB_COLS;
     }
 
-    private _initializeFromFEN(FENstr: string) {
-        const FEN = FENstr.split(" ");
+    private _initializeFromFEN(strFEN: string): void {
+        const FEN = strFEN.split(" ");
         assert(FEN.length === 6, "Invalid FEN length");
 
         const rowsFEN = FEN[0].split("/");

@@ -18,11 +18,11 @@ class Move {
         this.pieceTaken  = pieceTaken;
     }
 
-    public get row() {
+    public get row(): number {
         return this.position.row;
     }
 
-    public get col() {
+    public get col(): number {
         return this.position.col;
     }
 
