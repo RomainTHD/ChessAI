@@ -5,7 +5,7 @@ import {
 } from "contexts/chessboardComponent";
 import {
     Color,
-    Move,
+    Piece,
     Position,
 } from "model";
 import React from "react";
@@ -16,17 +16,19 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         super(props);
 
         this.state = {
+            chessboard: props.chessboard,
             selectedMoves: [],
+            selectedPiece: null,
         };
     }
 
     public override render(): React.ReactNode {
         const rows = [] as JSX.Element[];
 
-        for (let row = this.props.chessboard.NB_ROWS - 1; row >= 0; --row) {
+        for (let row = this.state.chessboard.NB_ROWS - 1; row >= 0; --row) {
             const cells = [] as JSX.Element[];
 
-            for (let col = 0; col < this.props.chessboard.NB_COLS; ++col) {
+            for (let col = 0; col < this.state.chessboard.NB_COLS; ++col) {
                 let canBeOccupied = false;
                 let canBeTaken    = false;
 
@@ -40,16 +42,16 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                     }
                 }
 
+                const pos   = new Position(row, col);
+                const piece = this.state.chessboard.getPiece(pos);
                 cells.push((
                     <PieceComponent
                         key={col}
                         backgroundColor={(row ^ col) % 2 ? Color.White : Color.Black}
                         canBeOccupied={canBeOccupied}
                         canBeTaken={canBeTaken}
-                        onMovesSelected={(selectedMoves: Move[]) => this.setState({
-                            selectedMoves,
-                        })}
-                        piece={this.props.chessboard.getPiece(new Position(row, col))}
+                        onClick={() => this._onClick(pos, piece)}
+                        piece={piece}
                     />
                 ));
             }
@@ -73,6 +75,43 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                 </tbody>
             </Table>
         );
+    }
+
+    private _onClick(pos: Position, piece: Piece | null): void {
+        let hasPlayed = false;
+
+        if (this.state.selectedPiece !== null) {
+            for (const move of this.state.selectedMoves) {
+                if (move.position.equals(pos)) {
+                    this.state.chessboard.playMove(move);
+                    this.setState({
+                        chessboard: this.state.chessboard,
+                        selectedMoves: [],
+                        selectedPiece: null,
+                    });
+
+                    hasPlayed = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasPlayed && piece !== null) {
+            const moves = piece.getAvailableMoves();
+            console.log(moves);
+
+            if (this.state.selectedPiece === piece) {
+                this.setState({
+                    selectedMoves: [],
+                    selectedPiece: null,
+                });
+            } else {
+                this.setState({
+                    selectedMoves: moves,
+                    selectedPiece: piece,
+                });
+            }
+        }
     }
 }
 

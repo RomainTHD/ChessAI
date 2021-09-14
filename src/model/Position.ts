@@ -10,6 +10,10 @@ class Position {
     public static add(pos1: Position, pos2: Position): Position {
         return new Position(pos1.row + pos2.row, pos1.col + pos2.col);
     }
+
+    public equals(other: Position): boolean {
+        return this.row === other.row && this.col === other.col;
+    }
 }
 
 export {Position};

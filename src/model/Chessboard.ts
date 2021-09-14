@@ -1,6 +1,7 @@
 import assert from "assert";
 import {
     Color,
+    Move,
     Piece,
     Position,
 } from "model";
@@ -9,9 +10,13 @@ class Chessboard {
     public readonly NB_ROWS = 8;
     public readonly NB_COLS = 8;
     private readonly _board: (Piece | null)[][];
+    private readonly _blackPieces: Piece[];
+    private readonly _whitePieces: Piece[];
 
     public constructor(FEN: string = "") {
-        this._board = [];
+        this._board       = [];
+        this._blackPieces = [];
+        this._whitePieces = [];
 
         for (let row = 0; row < this.NB_ROWS; ++row) {
             const currentRow = [] as null[];
@@ -30,11 +35,29 @@ class Chessboard {
         this._initializeFromFEN(FEN);
     }
 
+    public playMove(move: Move): void {
+        this._board[move.parentPiece.row][move.parentPiece.col] = null;
+        this._board[move.row][move.col] = move.parentPiece;
+        move.parentPiece.setNewPosition(move.position);
+    }
+
     // @ts-ignore
     private _activeColor: Color;
 
     public get activeColor(): Color {
         return this._activeColor;
+    }
+
+    public getAllPieces(): Piece[] {
+        return this._blackPieces.concat(this._whitePieces);
+    }
+
+    public getBlackPieces(): Piece[] {
+        return this._blackPieces;
+    }
+
+    public getWhitePieces(): Piece[] {
+        return this._whitePieces;
     }
 
     public getPiece(position: Position): Piece | null {

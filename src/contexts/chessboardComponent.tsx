@@ -1,6 +1,7 @@
 import {
     Chessboard,
     Move,
+    Piece,
 } from "model";
 
 interface ChessboardComponentProps {
@@ -8,7 +9,9 @@ interface ChessboardComponentProps {
 }
 
 interface ChessboardComponentState {
+    chessboard: Chessboard,
     selectedMoves: Move[],
+    selectedPiece: Piece | null,
 }
 
 export type {

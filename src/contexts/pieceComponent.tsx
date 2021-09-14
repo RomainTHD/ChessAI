@@ -1,6 +1,5 @@
 import {
     Color,
-    Move,
     Piece,
 } from "model";
 
@@ -8,7 +7,7 @@ interface PieceComponentProps {
     backgroundColor: Color,
     canBeOccupied: boolean,
     canBeTaken: boolean,
-    onMovesSelected: (selectedMoves: Move[]) => void,
+    onClick: () => void,
     piece: Piece | null,
 }
 

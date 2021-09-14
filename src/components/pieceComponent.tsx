@@ -44,26 +44,11 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
                 onMouseLeave={() => this.setState({
                     isHovered: false,
                 })}
-                onClick={() => {
-                    if (this.props.piece !== null) {
-                        // FIXME: Also work for the other player
-                        this._onMouseClick();
-                    }
-                }}
+                onClick={() => this.props.onClick()}
             >
                 {content}
             </td>
         );
-    }
-
-    private _onMouseClick(): void {
-        if (!this.props.piece) {
-            return;
-        }
-
-        const moves = this.props.piece.getAvailableMoves();
-        console.log(moves);
-        this.props.onMovesSelected(moves);
     }
 }
 
