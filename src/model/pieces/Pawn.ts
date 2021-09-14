@@ -1,6 +1,7 @@
 import {
     Color,
     Move,
+    MoveResult,
     Piece,
     Position,
     Type,
@@ -21,9 +22,28 @@ class Pawn extends Piece {
             upperBound = 2;
         }
 
+        const subMoves = [] as Move[];
         for (let i = 1; i <= upperBound; ++i) {
-            this._addMoveIfAvailable(Position.add(this.position, new Position(i * direction, 0)), moves);
+            const p = Position.add(this.position, new Position(i * direction, 0));
+            const res = this._addMoveIfAvailable(p, subMoves);
+            if (res === MoveResult.Occupied) {
+                moves.push(subMoves[0]);
+            } else {
+                break;
+            }
         }
+
+        const checkDiagFunction = (position: Position) => {
+            if (this.board.isValidPosition(position)) {
+                const target = this.board.getPiece(position);
+                if (target !== null && target.color !== this.color) {
+                    moves.push(Move.fromPosition(this, position, true));
+                }
+            }
+        };
+
+        checkDiagFunction(Position.add(this.position, new Position(direction, 1)));
+        checkDiagFunction(Position.add(this.position, new Position(direction, -1)));
 
         return moves;
     }
