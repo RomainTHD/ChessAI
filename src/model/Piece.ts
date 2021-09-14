@@ -46,7 +46,6 @@ abstract class Piece {
                 break;
 
             case "p":
-            default:
                 piece = new Pawn(board, color, position);
                 break;
 
@@ -57,6 +56,9 @@ abstract class Piece {
             case "r":
                 piece = new Rook(board, color, position);
                 break;
+
+            default:
+                throw new Error("Unknown FEN value");
         }
 
         return piece;
