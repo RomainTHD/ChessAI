@@ -37,8 +37,12 @@ class Chessboard {
         return this._activeColor;
     }
 
-    public getPiece(row: number, col: number): Piece | null {
-        return this._board[row][col];
+    public getPiece(position: Position): Piece | null {
+        return this._board[position.row][position.col];
+    }
+
+    public isValidPosition(position: Position): boolean {
+        return position.row >= 0 && position.row < this.NB_ROWS && position.col >= 0 && position.col < this.NB_COLS;
     }
 
     private _initializeFromFEN(FENstr: string) {

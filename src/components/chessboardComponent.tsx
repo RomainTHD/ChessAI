@@ -6,6 +6,7 @@ import {
 import {
     Color,
     Move,
+    Position,
 } from "model";
 import React from "react";
 import {Table} from "react-bootstrap";
@@ -48,7 +49,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                         onMovesSelected={(selectedMoves: Move[]) => this.setState({
                             selectedMoves,
                         })}
-                        piece={this.props.chessboard.getPiece(row, col)}
+                        piece={this.props.chessboard.getPiece(new Position(row, col))}
                     />
                 ));
             }

@@ -1,52 +1,43 @@
-import {Piece} from "model";
+import {
+    Piece,
+    Position,
+} from "model";
 
 class Move {
     public readonly parentPiece: Piece;
-    public readonly row: number;
-    public readonly col: number;
-    public readonly rowOffset: number;
-    public readonly colOffset: number;
+    public readonly position: Position;
     public readonly pieceTaken: boolean;
 
     private constructor(
         parentPiece: Piece,
-        row: number,
-        col: number,
-        rowOffset: number,
-        colOffset: number,
+        position: Position,
         pieceTaken: boolean,
     ) {
         this.parentPiece = parentPiece;
-        this.row         = row;
-        this.col         = col;
-        this.rowOffset   = rowOffset;
-        this.colOffset   = colOffset;
+        this.position    = position;
         this.pieceTaken  = pieceTaken;
     }
 
-    public static fromOffset(
-        parentPiece: Piece,
-        rowOffset: number,
-        colOffset: number,
-        pieceTaken = false,
-    ): Move {
+    public get row() {
+        return this.position.row;
+    }
+
+    public get col() {
+        return this.position.col;
+    }
+
+    public static fromOffset(parentPiece: Piece, offset: Position, pieceTaken = false): Move {
         return new Move(
             parentPiece,
-            parentPiece.position.row + rowOffset,
-            parentPiece.position.col + colOffset,
-            rowOffset,
-            colOffset,
+            Position.add(parentPiece.position, offset),
             pieceTaken,
         );
     }
 
-    public static fromPosition(parentPiece: Piece, row: number, col: number, pieceTaken = false): Move {
+    public static fromPosition(parentPiece: Piece, position: Position, pieceTaken = false): Move {
         return new Move(
             parentPiece,
-            row,
-            col,
-            row - parentPiece.position.row,
-            col - parentPiece.position.col,
+            position,
             pieceTaken,
         );
     }
