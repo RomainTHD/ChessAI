@@ -21,17 +21,21 @@ enum MoveResult {
 
 abstract class Piece {
     public abstract readonly type: Type;
-
     public readonly board: Chessboard;
     public readonly color: Color;
+    private _position: Position;
+    private _hasMoved: boolean;
 
     public constructor(board: Chessboard, color: Color, position: Position) {
         this.board     = board;
         this.color     = color;
         this._position = position;
+        this._hasMoved = false;
     }
 
-    private _position: Position;
+    public get hasMoved(): boolean {
+        return this._hasMoved;
+    }
 
     public get position(): Position {
         return this._position;
@@ -83,6 +87,10 @@ abstract class Piece {
         return piece;
     }
 
+    public setMoved(): void {
+        this._hasMoved = true;
+    }
+
     public getFEN(): string {
         let FEN = this.type.FEN;
 
@@ -121,7 +129,7 @@ abstract class Piece {
     protected _checkStraightLines(direction: Position, moves: Move[], limit = Infinity): void {
         let i = 1;
         while (true) {
-            const p   = Position.add(this.position, new Position(i * direction.row, i * direction.col));
+            const p   = this.position.add(new Position(i * direction.row, i * direction.col));
             const res = this._addMoveIfAvailable(p, moves);
             if (res !== MoveResult.Occupied) {
                 break;

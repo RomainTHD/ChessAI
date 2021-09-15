@@ -11,6 +11,10 @@ class Position {
         return new Position(pos1.row + pos2.row, pos1.col + pos2.col);
     }
 
+    public add(other: Position): Position {
+        return Position.add(this, other);
+    }
+
     public equals(other: Position): boolean {
         return this.row === other.row && this.col === other.col;
     }

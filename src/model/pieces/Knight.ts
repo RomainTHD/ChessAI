@@ -20,7 +20,7 @@ class Knight extends Piece {
         }
 
         for (const offset of offsets) {
-            this._addMoveIfAvailable(Position.add(this.position, offset), moves);
+            this._addMoveIfAvailable(this.position.add(offset), moves);
         }
 
         return moves;

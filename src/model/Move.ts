@@ -29,7 +29,7 @@ class Move {
     public static fromOffset(parentPiece: Piece, offset: Position, pieceTaken = false): Move {
         return new Move(
             parentPiece,
-            Position.add(parentPiece.position, offset),
+            parentPiece.position.add(offset),
             pieceTaken,
         );
     }

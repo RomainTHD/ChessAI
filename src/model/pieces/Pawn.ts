@@ -24,7 +24,7 @@ class Pawn extends Piece {
 
         const subMoves = [] as Move[];
         for (let i = 1; i <= upperBound; ++i) {
-            const p = Position.add(this.position, new Position(i * direction, 0));
+            const p = this.position.add(new Position(i * direction, 0));
             const res = this._addMoveIfAvailable(p, subMoves);
             if (res === MoveResult.Occupied) {
                 moves.push(subMoves[0]);
@@ -42,8 +42,8 @@ class Pawn extends Piece {
             }
         };
 
-        checkDiagFunction(Position.add(this.position, new Position(direction, 1)));
-        checkDiagFunction(Position.add(this.position, new Position(direction, -1)));
+        checkDiagFunction(this.position.add(new Position(direction, 1)));
+        checkDiagFunction(this.position.add(new Position(direction, -1)));
 
         return moves;
     }
