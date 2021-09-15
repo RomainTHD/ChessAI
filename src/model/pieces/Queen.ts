@@ -1,9 +1,9 @@
 import {
+    Move,
     Piece,
     Position,
+    Type,
 } from "model";
-import {Move} from "model/Move";
-import {Type} from "model/Type";
 
 class Queen extends Piece {
     public readonly type = Type.Queen;
