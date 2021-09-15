@@ -17,6 +17,7 @@ class Chessboard {
         this._board       = [];
         this._blackPieces = [];
         this._whitePieces = [];
+        this._activeColor = Color.White;
 
         for (let row = 0; row < this.NB_ROWS; ++row) {
             const currentRow = [] as null[];
@@ -35,17 +36,16 @@ class Chessboard {
         this._initializeFromFEN(FEN);
     }
 
-    public playMove(move: Move): void {
-        this._board[move.parentPiece.row][move.parentPiece.col] = null;
-        this._board[move.row][move.col] = move.parentPiece;
-        move.parentPiece.setNewPosition(move.position);
-    }
-
-    // @ts-ignore
     private _activeColor: Color;
 
     public get activeColor(): Color {
         return this._activeColor;
+    }
+
+    public playMove(move: Move): void {
+        this._board[move.parentPiece.row][move.parentPiece.col] = null;
+        this._board[move.row][move.col]                         = move.parentPiece;
+        move.parentPiece.setNewPosition(move.position);
     }
 
     public getAllPieces(): Piece[] {
@@ -70,6 +70,15 @@ class Chessboard {
 
     private _initializeFromFEN(strFEN: string): void {
         const FEN = strFEN.split(" ");
+
+        if (FEN.length === 4) {
+            FEN.push("0");
+        }
+
+        if (FEN.length === 5) {
+            FEN.push("0");
+        }
+
         assert(FEN.length === 6, "Invalid FEN length");
 
         const rowsFEN = FEN[0].split("/");
