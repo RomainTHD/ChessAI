@@ -2,7 +2,6 @@ import {
     PieceComponentProps,
     PieceComponentState,
 } from "contexts/pieceComponent";
-import {Color} from "model";
 import React from "react";
 import "styles/pieceComponent.scss";
 
@@ -32,7 +31,10 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
             <td
                 className={
                     "piece " +
-                    `${this.state.isHovered && this.props.piece?.color === Color.White ? "piece--clickable" : ""} ` +
+                    `${(
+                        (this.state.isHovered && this.props.piece?.color === this.props.chessboard.activeColor)
+                        || this.props.canBeOccupied
+                    ) ? "piece--clickable" : ""} ` +
                     `piece--color-${this.props.backgroundColor} ` +
                     `piece--active-${this.state.isHovered} ` +
                     `piece--occupation-${this.props.canBeOccupied && !this.props.canBeTaken} ` +

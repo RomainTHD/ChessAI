@@ -50,6 +50,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                         backgroundColor={(row ^ col) % 2 ? Color.White : Color.Black}
                         canBeOccupied={canBeOccupied}
                         canBeTaken={canBeTaken}
+                        chessboard={this.state.chessboard}
                         onClick={() => this._onClick(pos, piece)}
                         piece={piece}
                     />
@@ -96,9 +97,8 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
             }
         }
 
-        if (!hasPlayed && piece !== null) {
+        if (!hasPlayed && piece !== null && piece.color === this.state.chessboard.activeColor) {
             const moves = piece.getAvailableMoves();
-            console.log(moves);
 
             if (this.state.selectedPiece === piece) {
                 this.setState({

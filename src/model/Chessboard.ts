@@ -46,6 +46,7 @@ class Chessboard {
         this._board[move.parentPiece.row][move.parentPiece.col] = null;
         this._board[move.row][move.col]                         = move.parentPiece;
         move.parentPiece.setNewPosition(move.position);
+        this._activeColor = (this._activeColor === Color.White) ? Color.Black : Color.White;
     }
 
     public getAllPieces(): Piece[] {
