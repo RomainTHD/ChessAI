@@ -19,6 +19,7 @@ class Chessboard {
     private readonly _castlingAllowed: { [c: Color | string]: { [s: string]: boolean } };
     private _activeColor: Color;
     private _opponent: Opponent | null;
+    private _playerColor: Color;
 
     public constructor(FEN: string = "", opponentClass: OpponentSpecs | null) {
         this._board           = [];
@@ -29,6 +30,7 @@ class Chessboard {
         this._castlingAllowed = {};
         this._activeColor     = Color.White;
         this._opponent        = null;
+        this._playerColor     = Color.White;
 
         for (let row = 0; row < this.NB_ROWS; ++row) {
             const currentRow = [] as null[];
@@ -45,6 +47,10 @@ class Chessboard {
         }
 
         this._initializeFromFEN(FEN, opponentClass);
+    }
+
+    public get playerColor(): Color {
+        return this._playerColor;
     }
 
     public get opponent(): Opponent | null {
@@ -146,8 +152,15 @@ class Chessboard {
         }
 
         if (opponentClass !== null) {
-            // TODO: Alternate colors
-            this._opponent = new opponentClass(Color.Black, this);
+            let c1 = Color.Black, c2 = Color.White;
+
+            if (Math.random() > 0.5) {
+                c1 = Color.White;
+                c2 = Color.Black;
+            }
+
+            this._opponent    = new opponentClass(c1, this);
+            this._playerColor = c2;
         }
 
         this._castlingAllowed[Color.White] = {

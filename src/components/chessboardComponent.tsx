@@ -1,3 +1,4 @@
+import assert from "assert";
 import {PieceComponent} from "components/pieceComponent";
 import {
     ChessboardComponentProps,
@@ -20,6 +21,12 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
             selectedMoves: [],
             selectedPiece: null,
         };
+    }
+
+    public override componentDidMount(): void {
+        if (this.state.chessboard.activeColor === this.state.chessboard.opponent?.ownColor) {
+            this._playOpponent();
+        }
     }
 
     public override render(): React.ReactNode {
@@ -78,6 +85,15 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         );
     }
 
+    private _playOpponent(): void {
+        assert(this.state.chessboard.opponent !== null);
+        this.state.chessboard.opponent.playTurn().then(() => {
+            this.setState({
+                chessboard: this.state.chessboard,
+            });
+        });
+    }
+
     private _onClick(pos: Position, piece: Piece | null): void {
         let hasPlayed = false;
 
@@ -91,11 +107,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                         selectedPiece: null,
                     }, () => {
                         if (this.state.chessboard.opponent !== null) {
-                            this.state.chessboard.opponent.playTurn().then(() => {
-                                this.setState({
-                                    chessboard: this.state.chessboard,
-                                });
-                            });
+                            this._playOpponent();
                         }
                     });
 
