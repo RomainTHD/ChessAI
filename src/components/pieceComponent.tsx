@@ -27,14 +27,19 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
             );
         }
 
+        const isHovered     = this.state.isHovered;
+        const canBeOccupied = this.props.canBeOccupied;
+        let activeColor     = this.props.piece?.color === this.props.chessboard.activeColor;
+
+        if (this.props.chessboard.opponent !== null) {
+            activeColor = activeColor && this.props.chessboard.playerColor === this.props.piece?.color;
+        }
+
         return (
             <td
                 className={
                     "piece " +
-                    `${(
-                        (this.state.isHovered && this.props.piece?.color === this.props.chessboard.activeColor)
-                        || this.props.canBeOccupied
-                    ) ? "piece--clickable" : ""} ` +
+                    `${(isHovered && activeColor) || canBeOccupied ? "piece--clickable" : ""} ` +
                     `piece--color-${this.props.backgroundColor} ` +
                     `piece--active-${this.state.isHovered} ` +
                     `piece--occupation-${this.props.canBeOccupied && !this.props.canBeTaken} ` +
