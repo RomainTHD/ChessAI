@@ -4,6 +4,7 @@ import {
     Move,
     Piece,
     Position,
+    Type,
 } from "model";
 
 class Chessboard {
@@ -13,7 +14,7 @@ class Chessboard {
     private readonly _board: (Piece | null)[][];
     private readonly _blackPieces: Piece[];
     private readonly _whitePieces: Piece[];
-    private _castlingAllowed: { [c: Color | string]: boolean } = {};
+    private _castlingAllowed: { [c: Color | string]: { [s: string]: boolean } } = {};
     private _activeColor: Color;
 
     public constructor(FEN: string = "") {
@@ -82,8 +83,8 @@ class Chessboard {
         return position.row >= 0 && position.row < this.NB_ROWS && position.col >= 0 && position.col < this.NB_COLS;
     }
 
-    public castlingAllowed(color: Color): boolean {
-        return this._castlingAllowed[color];
+    public castlingAllowed(color: Color, side: Type): boolean {
+        return this._castlingAllowed[color][side.name];
     }
 
     private _initializeFromFEN(strFEN: string): void {
@@ -122,8 +123,15 @@ class Chessboard {
             throw new Error("Invalid FEN active color");
         }
 
-        this._castlingAllowed[Color.White] = /[KQ]/.test(FEN[2]);
-        this._castlingAllowed[Color.Black] = /[kq]/.test(FEN[2]);
+        this._castlingAllowed[Color.White] = {
+            [Type.King.name]: FEN[2].includes("K"),
+            [Type.Queen.name]: FEN[2].includes("Q"),
+        };
+
+        this._castlingAllowed[Color.Black] = {
+            [Type.Queen.name]: FEN[2].includes("q"),
+            [Type.King.name]: FEN[2].includes("k"),
+        };
     }
 }
 

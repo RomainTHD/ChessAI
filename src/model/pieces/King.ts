@@ -20,7 +20,7 @@ class King extends Piece {
         this._checkStraightLines(new Position(1, 1), moves, 1);
         this._checkStraightLines(new Position(1, -1), moves, 1);
 
-        if (this.board.castlingAllowed(this.color) && !this.hasMoved) {
+        if (!this.hasMoved) {
             const checkCastling = (rowLimit: number, rowDir: number) => {
                 let emptyRow = true;
                 for (let i = 1; i <= rowLimit; ++i) {
@@ -40,8 +40,13 @@ class King extends Piece {
                 }
             };
 
-            checkCastling(2, 1);
-            checkCastling(3, -1);
+            if (this.board.castlingAllowed(this.color, Type.King)) {
+                checkCastling(2, 1);
+            }
+
+            if (this.board.castlingAllowed(this.color, Type.Queen)) {
+                checkCastling(3, -1);
+            }
         }
 
         return moves;
