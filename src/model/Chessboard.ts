@@ -21,7 +21,7 @@ class Chessboard {
     private _opponent: Opponent | null;
     private _playerColor: Color;
 
-    public constructor(FEN: string = "", opponentClass: OpponentSpecs | null) {
+    public constructor(FEN: string = "", opponentClass: OpponentSpecs | null = null) {
         this._board           = [];
         this._pieces          = {
             [Color.Black]: [],
