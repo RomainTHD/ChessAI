@@ -89,6 +89,14 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                         chessboard: this.state.chessboard,
                         selectedMoves: [],
                         selectedPiece: null,
+                    }, () => {
+                        if (this.state.chessboard.opponent !== null) {
+                            this.state.chessboard.opponent.playTurn().then(() => {
+                                this.setState({
+                                    chessboard: this.state.chessboard,
+                                });
+                            });
+                        }
                     });
 
                     hasPlayed = true;

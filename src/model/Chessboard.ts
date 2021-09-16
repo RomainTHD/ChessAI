@@ -6,22 +6,29 @@ import {
     Position,
     Type,
 } from "model";
+import {
+    Opponent,
+    OpponentSpecs,
+} from "model/Opponent/index";
 
 class Chessboard {
     public readonly NB_ROWS = 8;
     public readonly NB_COLS = 8;
-
     private readonly _board: (Piece | null)[][];
-    private readonly _blackPieces: Piece[];
-    private readonly _whitePieces: Piece[];
-    private _castlingAllowed: { [c: Color | string]: { [s: string]: boolean } } = {};
+    private readonly _pieces: { [c: Color | string]: Piece[] };
+    private readonly _castlingAllowed: { [c: Color | string]: { [s: string]: boolean } };
     private _activeColor: Color;
+    private _opponent: Opponent | null;
 
-    public constructor(FEN: string = "") {
-        this._board       = [];
-        this._blackPieces = [];
-        this._whitePieces = [];
-        this._activeColor = Color.White;
+    public constructor(FEN: string = "", opponentClass: OpponentSpecs | null) {
+        this._board           = [];
+        this._pieces          = {
+            [Color.Black]: [],
+            [Color.White]: [],
+        };
+        this._castlingAllowed = {};
+        this._activeColor     = Color.White;
+        this._opponent        = null;
 
         for (let row = 0; row < this.NB_ROWS; ++row) {
             const currentRow = [] as null[];
@@ -37,7 +44,11 @@ class Chessboard {
             FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         }
 
-        this._initializeFromFEN(FEN);
+        this._initializeFromFEN(FEN, opponentClass);
+    }
+
+    public get opponent(): Opponent | null {
+        return this._opponent;
     }
 
     public get activeColor(): Color {
@@ -45,6 +56,19 @@ class Chessboard {
     }
 
     public playMove(move: Move): void {
+        assert(move.pieceTaken !== (this.getPiece(move.position) === null));
+
+        if (move.pieceTaken) {
+            const p = this.getPiece(move.position);
+            assert(p !== null);
+            for (let i = 0; i < this._pieces[p.color].length; ++i) {
+                if (p === this._pieces[p.color][i]) {
+                    this._pieces[p.color].splice(i, 1);
+                    break;
+                }
+            }
+        }
+
         this._board[move.parentPiece.row][move.parentPiece.col] = null;
         this._board[move.row][move.col]                         = move.parentPiece;
         move.parentPiece.setNewPosition(move.position);
@@ -64,15 +88,11 @@ class Chessboard {
     }
 
     public getAllPieces(): Piece[] {
-        return this._blackPieces.concat(this._whitePieces);
+        return this._pieces[Color.Black].concat(this._pieces[Color.White]);
     }
 
-    public getBlackPieces(): Piece[] {
-        return this._blackPieces;
-    }
-
-    public getWhitePieces(): Piece[] {
-        return this._whitePieces;
+    public getPieces(color: Color): Piece[] {
+        return this._pieces[color];
     }
 
     public getPiece(position: Position): Piece | null {
@@ -87,7 +107,7 @@ class Chessboard {
         return this._castlingAllowed[color][side.name];
     }
 
-    private _initializeFromFEN(strFEN: string): void {
+    private _initializeFromFEN(strFEN: string, opponentClass: OpponentSpecs | null): void {
         const FEN = strFEN.split(" ");
 
         if (FEN.length === 4) {
@@ -109,7 +129,9 @@ class Chessboard {
                 if (/[0-9]/.test(c)) {
                     col += parseInt(c);
                 } else {
-                    this._board[row][col] = Piece.createFromFEN(c, this, new Position(row, col));
+                    const p               = Piece.createFromFEN(c, this, new Position(row, col));
+                    this._board[row][col] = p;
+                    this._pieces[p.color].push(p);
                     ++col;
                 }
             }
@@ -121,6 +143,11 @@ class Chessboard {
             this._activeColor = Color.White;
         } else {
             throw new Error("Invalid FEN active color");
+        }
+
+        if (opponentClass !== null) {
+            // TODO: Alternate colors
+            this._opponent = new opponentClass(Color.Black, this);
         }
 
         this._castlingAllowed[Color.White] = {
