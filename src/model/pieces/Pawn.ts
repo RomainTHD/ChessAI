@@ -22,10 +22,10 @@ class Pawn extends Piece {
             upperBound = 2;
         }
 
-        const subMoves = [] as Move[];
         for (let i = 1; i <= upperBound; ++i) {
-            const p = this.position.add(new Position(i * direction, 0));
-            const res = this._addMoveIfAvailable(p, subMoves);
+            const subMoves = [] as Move[];
+            const p        = this.position.addRow(i * direction);
+            const res      = this._addMoveIfAvailable(p, subMoves);
             if (res === MoveResult.Occupied) {
                 moves.push(subMoves[0]);
             } else {
