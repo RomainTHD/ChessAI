@@ -15,6 +15,14 @@ class Position {
         return Position.add(this, other);
     }
 
+    public addRow(row: number): Position {
+        return this.add(new Position(row, 0));
+    }
+
+    public addCol(col: number): Position {
+        return this.add(new Position(0, col));
+    }
+
     public equals(other: Position): boolean {
         return this.row === other.row && this.col === other.col;
     }

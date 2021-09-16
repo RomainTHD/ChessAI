@@ -9,9 +9,12 @@ import {
 class Chessboard {
     public readonly NB_ROWS = 8;
     public readonly NB_COLS = 8;
+
     private readonly _board: (Piece | null)[][];
     private readonly _blackPieces: Piece[];
     private readonly _whitePieces: Piece[];
+    private _castlingAllowed: { [c: Color | string]: boolean } = {};
+    private _activeColor: Color;
 
     public constructor(FEN: string = "") {
         this._board       = [];
@@ -36,8 +39,6 @@ class Chessboard {
         this._initializeFromFEN(FEN);
     }
 
-    private _activeColor: Color;
-
     public get activeColor(): Color {
         return this._activeColor;
     }
@@ -46,6 +47,18 @@ class Chessboard {
         this._board[move.parentPiece.row][move.parentPiece.col] = null;
         this._board[move.row][move.col]                         = move.parentPiece;
         move.parentPiece.setNewPosition(move.position);
+        move.parentPiece.setMoved();
+
+        if (move.isCastling) {
+            assert(move.castlingRook !== null);
+            assert(move.castlingRookPosition !== null);
+
+            this._board[move.castlingRook.row][move.castlingRook.col]                 = null;
+            this._board[move.castlingRookPosition.row][move.castlingRookPosition.col] = move.castlingRook;
+            move.castlingRook.setNewPosition(move.castlingRookPosition);
+            move.castlingRook.setMoved();
+        }
+
         this._activeColor = (this._activeColor === Color.White) ? Color.Black : Color.White;
     }
 
@@ -67,6 +80,10 @@ class Chessboard {
 
     public isValidPosition(position: Position): boolean {
         return position.row >= 0 && position.row < this.NB_ROWS && position.col >= 0 && position.col < this.NB_COLS;
+    }
+
+    public castlingAllowed(color: Color): boolean {
+        return this._castlingAllowed[color];
     }
 
     private _initializeFromFEN(strFEN: string): void {
@@ -104,6 +121,9 @@ class Chessboard {
         } else {
             throw new Error("Invalid FEN active color");
         }
+
+        this._castlingAllowed[Color.White] = /[KQ]/.test(FEN[2]);
+        this._castlingAllowed[Color.Black] = /[kq]/.test(FEN[2]);
     }
 }
 
