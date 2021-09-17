@@ -32,7 +32,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
         let activeColor     = this.props.piece?.color === this.props.chessboard.activeColor;
 
         if (this.props.chessboard.opponent !== null) {
-            activeColor = activeColor && this.props.chessboard.playerColor === this.props.piece?.color;
+            activeColor = activeColor && this.props.chessboard.player.ownColor === this.props.piece?.color;
         }
 
         return (

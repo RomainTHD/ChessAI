@@ -1,4 +1,3 @@
-import assert from "assert";
 import {PieceComponent} from "components/pieceComponent";
 import {
     ChessboardComponentProps,
@@ -9,6 +8,10 @@ import {
     Piece,
     Position,
 } from "model";
+import {
+    Player,
+    RandomMove,
+} from "model/Opponent";
 import React from "react";
 import {Table} from "react-bootstrap";
 
@@ -16,17 +19,26 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
     public constructor(props: ChessboardComponentProps) {
         super(props);
 
+        const chessboard = this.props.chessboard;
+
         this.state = {
-            chessboard: props.chessboard,
+            chessboard,
             selectedMoves: [],
             selectedPiece: null,
         };
+
+        chessboard.setFirstOpponent(new Player(this.state.chessboard));
+        chessboard.setSecondOpponent(new RandomMove(this.state.chessboard));
     }
 
     public override componentDidMount(): void {
-        if (this.state.chessboard.activeColor === this.state.chessboard.opponent?.ownColor) {
-            this._playOpponent();
-        }
+        this.state.chessboard.onUpdate(() => {
+            this.setState({
+                chessboard: this.state.chessboard,
+            });
+        });
+
+        this.state.chessboard.start().then();
     }
 
     public override render(): React.ReactNode {
@@ -85,30 +97,17 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         );
     }
 
-    private _playOpponent(): void {
-        assert(this.state.chessboard.opponent !== null);
-        this.state.chessboard.opponent.playTurn().then(() => {
-            this.setState({
-                chessboard: this.state.chessboard,
-            });
-        });
-    }
-
     private _onClick(pos: Position, piece: Piece | null): void {
         let hasPlayed = false;
 
         if (this.state.selectedPiece !== null) {
             for (const move of this.state.selectedMoves) {
                 if (move.position.equals(pos)) {
-                    this.state.chessboard.playMove(move);
+                    (this.state.chessboard.player as Player).moveSelected(move);
+
                     this.setState({
-                        chessboard: this.state.chessboard,
                         selectedMoves: [],
                         selectedPiece: null,
-                    }, () => {
-                        if (this.state.chessboard.opponent !== null) {
-                            this._playOpponent();
-                        }
                     });
 
                     hasPlayed = true;

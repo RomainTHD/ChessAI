@@ -3,9 +3,10 @@ import {
     Piece,
 } from "model";
 import {Opponent} from "model/Opponent";
+import {sleep} from "utils";
 
 class RandomMove extends Opponent {
-    protected async _getMoveToPlay(): Promise<Move | null> {
+    public async getMoveToPlay(waitForPlayer: boolean): Promise<Move | null> {
         const pieces   = [...this.board.getPieces(this.ownColor)];
         let moveToPlay = null as Move | null;
 
@@ -21,6 +22,10 @@ class RandomMove extends Opponent {
             if (moves.length !== 0) {
                 moveToPlay = moves[Math.floor(Math.random() * moves.length)];
             }
+        }
+
+        if (waitForPlayer) {
+            await sleep(500);
         }
 
         return moveToPlay;
