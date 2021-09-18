@@ -8,7 +8,7 @@ import {
 class Knight extends Piece {
     public readonly type = Type.Knight;
 
-    public getAvailableMoves(): Move[] {
+    public getPseudoLegalMoves(): Move[] {
         const moves   = [] as Move[];
         const offsets = [] as Position[];
 

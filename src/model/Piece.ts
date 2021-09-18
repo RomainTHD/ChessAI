@@ -103,7 +103,21 @@ abstract class Piece {
         return FEN;
     }
 
-    public abstract getAvailableMoves(): Move[];
+    public abstract getPseudoLegalMoves(): Move[];
+
+    public getLegalMoves(): Move[] {
+        const pseudoLegalMoves = this.getPseudoLegalMoves();
+        const legalMoves = [] as Move[];
+
+        for (const move of pseudoLegalMoves) {
+            this.board.tryMove(move);
+
+
+            this.board.revertMove(move);
+        }
+
+        return legalMoves;
+    }
 
     public setNewPosition(newPos: Position): void {
         this._position = newPos;

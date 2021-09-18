@@ -67,6 +67,14 @@ class Chessboard {
         return this._opponents[1];
     }
 
+    public tryMove(move: Move): void {
+
+    }
+
+    public revertMove(move: Move): void {
+
+    }
+
     public async start(waitForPlayer = true): Promise<void> {
         while (true) {
             const move = await this._opponents[this._currentOpponentIndex].getMoveToPlay(waitForPlayer);

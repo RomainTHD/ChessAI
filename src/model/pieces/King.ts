@@ -8,7 +8,7 @@ import {
 class King extends Piece {
     public readonly type = Type.King;
 
-    public getAvailableMoves(): Move[] {
+    public getPseudoLegalMoves(): Move[] {
         const moves = [] as Move[];
 
         this._checkStraightLines(new Position(-1, 0), moves, 1);

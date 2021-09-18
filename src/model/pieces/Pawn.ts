@@ -10,7 +10,7 @@ import {
 class Pawn extends Piece {
     public readonly type = Type.Pawn;
 
-    public getAvailableMoves(): Move[] {
+    public getPseudoLegalMoves(): Move[] {
         // Change direction according to the color
         const direction = this.color === Color.White ? 1 : -1;
         const moves     = [] as Move[];

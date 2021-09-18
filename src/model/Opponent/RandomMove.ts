@@ -17,7 +17,7 @@ class RandomMove extends Opponent {
 
         while (pieces.length !== 0 && moveToPlay === null) {
             const currentPiece = pieces.pop() as Piece;
-            const moves        = currentPiece.getAvailableMoves();
+            const moves        = currentPiece.getLegalMoves();
 
             if (moves.length !== 0) {
                 moveToPlay = moves[Math.floor(Math.random() * moves.length)];
