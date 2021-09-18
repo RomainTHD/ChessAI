@@ -186,7 +186,7 @@ class Chessboard {
             let col = 0;
             for (let c of rowsFEN[row]) {
                 if (/[0-9]/.test(c)) {
-                    col += parseInt(c);
+                    col += Number(c);
                 } else {
                     const p               = Piece.createFromFEN(c, this, new Position(row, col));
                     this._board[row][col] = p;
