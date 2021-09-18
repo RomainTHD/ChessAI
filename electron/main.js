@@ -24,7 +24,7 @@ function createWindow() {
     win.loadURL(
         isDev
             ? `http://localhost:${process.env.REACT_PORT}`
-            : `file://${path.join(__dirname, "../build/index.html")}`,
+            : `file://${path.join(__dirname, "../dist/index.html")}`,
     ).then();
 
     // Open the DevTools window
