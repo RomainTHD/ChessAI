@@ -15,6 +15,9 @@ import {
 import React from "react";
 import {Table} from "react-bootstrap";
 
+/**
+ * Chessboard component
+ */
 class ChessboardComponent extends React.Component<ChessboardComponentProps, ChessboardComponentState> {
     public constructor(props: ChessboardComponentProps) {
         super(props);
@@ -27,12 +30,14 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
             selectedPiece: null,
         };
 
+        // Change opponent here
         chessboard.setFirstOpponent(new Player(this.state.chessboard));
         chessboard.setSecondOpponent(new RandomMove(this.state.chessboard));
     }
 
     public override componentDidMount(): void {
-        this.state.chessboard.onUpdate(() => {
+        // Set board updated callback
+        this.state.chessboard.addUpdateListener(() => {
             this.setState({
                 chessboard: this.state.chessboard,
             });
@@ -42,17 +47,18 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
     }
 
     public override render(): React.ReactNode {
-        const rows = [] as JSX.Element[];
+        const rows = [] as React.ReactNode[];
 
         for (let row = this.state.chessboard.NB_ROWS - 1; row >= 0; --row) {
-            const cells = [] as JSX.Element[];
+            const cells = [] as React.ReactNode[];
 
             for (let col = 0; col < this.state.chessboard.NB_COLS; ++col) {
-                let canBeOccupied = false;
-                let canBeTaken    = false;
+                const piecePosition = new Position(row, col);
+                let canBeOccupied   = false;
+                let canBeTaken      = false;
 
                 for (const move of this.state.selectedMoves) {
-                    if (move.row === row && move.col === col) {
+                    if (move.position.equals(piecePosition)) {
                         canBeOccupied = true;
 
                         if (move.pieceTaken) {
@@ -61,8 +67,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                     }
                 }
 
-                const pos   = new Position(row, col);
-                const piece = this.state.chessboard.getPiece(pos);
+                const piece = this.state.chessboard.getPiece(piecePosition);
                 cells.push((
                     <PieceComponent
                         key={col}
@@ -70,7 +75,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                         canBeOccupied={canBeOccupied}
                         canBeTaken={canBeTaken}
                         chessboard={this.state.chessboard}
-                        onClick={() => this._onClick(pos, piece)}
+                        onClick={() => this._onClick(piecePosition, piece)}
                         piece={piece}
                     />
                 ));
@@ -101,6 +106,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         let hasPlayed = false;
 
         if (this.state.selectedPiece !== null) {
+            // We check if the player selected a move to play
             for (const move of this.state.selectedMoves) {
                 if (move.position.equals(pos)) {
                     (this.state.chessboard.player as Player).moveSelected(move);
@@ -117,8 +123,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         }
 
         if (!hasPlayed && piece !== null && piece.color === this.state.chessboard.activeColor) {
-            const moves = piece.getLegalMoves();
-
+            // We check if the player wants to see the available moves of one of its pieces
             if (this.state.selectedPiece === piece) {
                 this.setState({
                     selectedMoves: [],
@@ -126,7 +131,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                 });
             } else {
                 this.setState({
-                    selectedMoves: moves,
+                    selectedMoves: piece.getLegalMoves(),
                     selectedPiece: piece,
                 });
             }
