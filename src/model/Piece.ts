@@ -12,6 +12,8 @@ import {
     Rook,
     Type,
 } from "model";
+import {getOppositeColor} from "model/Color";
+import {getFENfromType} from "model/Type";
 
 enum MoveResult {
     Occupied,
@@ -91,29 +93,57 @@ abstract class Piece {
         this._hasMoved = true;
     }
 
+    public revertMoved(oldMovedValue: boolean): void {
+        this._hasMoved = oldMovedValue;
+    }
+
     public getFEN(): string {
-        let FEN = this.type.FEN;
-
-        if (this.color === Color.White) {
-            FEN = FEN.toUpperCase();
-        } else {
-            FEN = FEN.toLowerCase();
-        }
-
-        return FEN;
+        return getFENfromType(this.type, this.color);
     }
 
     public abstract getPseudoLegalMoves(): Move[];
 
     public getLegalMoves(): Move[] {
         const pseudoLegalMoves = this.getPseudoLegalMoves();
-        const legalMoves = [] as Move[];
+        const legalMoves       = [] as Move[];
 
-        for (const move of pseudoLegalMoves) {
-            this.board.tryMove(move);
+        for (const pseudoLegalMove of pseudoLegalMoves) {
+            this.board.tryMove(pseudoLegalMove, (board: Chessboard) => {
+                let legalMove = true;
 
+                for (const opponentPiece of board.getPieces(getOppositeColor(this.color))) {
+                    const opponentMoves = opponentPiece.getPseudoLegalMoves();
+                    for (const opponentMove of opponentMoves) {
+                        // eslint-disable-next-line
+                        board.tryMove(opponentMove, (nextBoard: Chessboard) => {
+                            let kingStillAlive    = false;
+                            const remainingPieces = nextBoard.getPieces(this.color);
+                            for (const remainingPiece of remainingPieces) {
+                                if (remainingPiece.type === Type.King) {
+                                    kingStillAlive = true;
+                                    break;
+                                }
+                            }
 
-            this.board.revertMove(move);
+                            if (!kingStillAlive) {
+                                legalMove = false;
+                            }
+                        });
+
+                        if (!legalMove) {
+                            break;
+                        }
+                    }
+
+                    if (!legalMove) {
+                        break;
+                    }
+                }
+
+                if (legalMove) {
+                    legalMoves.push(pseudoLegalMove);
+                }
+            });
         }
 
         return legalMoves;

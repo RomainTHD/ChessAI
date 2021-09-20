@@ -1,6 +1,7 @@
 import assert from "assert";
 import {
     Color,
+    getOppositeColor,
     Move,
     Piece,
     Position,
@@ -67,12 +68,47 @@ class Chessboard {
         return this._opponents[1];
     }
 
-    public tryMove(move: Move): void {
+    public tryMove(move: Move, tryFunction: (board: Chessboard) => void): void {
+        // Save state
+        const pieceTaken             = this.getPiece(move.position);
+        const oldParentPiecePosition = move.parentPiece.position;
 
-    }
+        const oldMovedState = move.parentPiece.hasMoved;
 
-    public revertMove(move: Move): void {
+        const oldCastlingRookPosition   = move.castlingRook?.position;
+        const oldCastlingRookMovedState = move.castlingRook?.hasMoved;
 
+        // Try to play
+
+        this._playMove(move, false);
+        tryFunction(this);
+
+        // Revert state
+
+        if (move.isCastling) {
+            assert(move.castlingRook !== null);
+            assert(move.castlingRookPosition !== null);
+            assert(oldCastlingRookPosition !== null);
+            assert(oldCastlingRookPosition instanceof Position);
+            assert(typeof oldCastlingRookMovedState === "boolean");
+
+            move.castlingRook.revertMoved(oldCastlingRookMovedState);
+            move.castlingRook.setNewPosition(oldCastlingRookPosition);
+            this._setPiece(move.castlingRookPosition, null);
+            this._setPiece(move.castlingRook.position, move.castlingRook);
+        }
+
+        this._activeColor = getOppositeColor(this._activeColor);
+
+        move.parentPiece.revertMoved(oldMovedState);
+        move.parentPiece.setNewPosition(oldParentPiecePosition);
+        this._setPiece(move.position, pieceTaken);
+        this._setPiece(move.parentPiece.position, move.parentPiece);
+
+        if (move.pieceTaken) {
+            assert(pieceTaken !== null);
+            this._pieces[pieceTaken.color].push(pieceTaken);
+        }
     }
 
     public async start(waitForPlayer = true): Promise<void> {
@@ -120,10 +156,10 @@ class Chessboard {
     }
 
     public castlingAllowed(color: Color, side: Type): boolean {
-        return this._castlingAllowed[color][side.name];
+        return this._castlingAllowed[color][side];
     }
 
-    private _playMove(move: Move): void {
+    private _playMove(move: Move, notifyUpdate = true): void {
         assert(move.pieceTaken !== (this.getPiece(move.position) === null));
 
         if (move.pieceTaken) {
@@ -137,8 +173,8 @@ class Chessboard {
             }
         }
 
-        this._board[move.parentPiece.row][move.parentPiece.col] = null;
-        this._board[move.row][move.col]                         = move.parentPiece;
+        this._setPiece(move.parentPiece.position, null);
+        this._setPiece(move.position, move.parentPiece);
         move.parentPiece.setNewPosition(move.position);
         move.parentPiece.setMoved();
 
@@ -146,16 +182,18 @@ class Chessboard {
             assert(move.castlingRook !== null);
             assert(move.castlingRookPosition !== null);
 
-            this._board[move.castlingRook.row][move.castlingRook.col]                 = null;
-            this._board[move.castlingRookPosition.row][move.castlingRookPosition.col] = move.castlingRook;
+            this._setPiece(move.castlingRook.position, null);
+            this._setPiece(move.castlingRookPosition, move.castlingRook);
             move.castlingRook.setNewPosition(move.castlingRookPosition);
             move.castlingRook.setMoved();
         }
 
-        this._activeColor = (this._activeColor === Color.White) ? Color.Black : Color.White;
+        this._activeColor = getOppositeColor(this._activeColor);
 
-        for (const callback of this._updateCallbacks) {
-            callback();
+        if (notifyUpdate) {
+            for (const callback of this._updateCallbacks) {
+                callback();
+            }
         }
     }
 
@@ -164,7 +202,7 @@ class Chessboard {
 
         let color = Math.random() > 0.5 ? Color.White : Color.Black;
         if (this._opponents[otherIndex] !== undefined) {
-            color = this._opponents[otherIndex].ownColor === Color.White ? Color.Black : Color.White;
+            color = getOppositeColor(this._opponents[otherIndex].ownColor);
         }
 
         if (color === Color.White) {
@@ -196,8 +234,8 @@ class Chessboard {
                 if (/[0-9]/.test(c)) {
                     col += Number(c);
                 } else {
-                    const p               = Piece.createFromFEN(c, this, new Position(row, col));
-                    this._board[row][col] = p;
+                    const p = Piece.createFromFEN(c, this, new Position(row, col));
+                    this._setPiece(new Position(row, col), p);
                     this._pieces[p.color].push(p);
                     ++col;
                 }
@@ -213,14 +251,18 @@ class Chessboard {
         }
 
         this._castlingAllowed[Color.White] = {
-            [Type.King.name]: FEN[2].includes("K"),
-            [Type.Queen.name]: FEN[2].includes("Q"),
+            [Type.King]: FEN[2].includes("K"),
+            [Type.Queen]: FEN[2].includes("Q"),
         };
 
         this._castlingAllowed[Color.Black] = {
-            [Type.Queen.name]: FEN[2].includes("q"),
-            [Type.King.name]: FEN[2].includes("k"),
+            [Type.Queen]: FEN[2].includes("q"),
+            [Type.King]: FEN[2].includes("k"),
         };
+    }
+
+    private _setPiece(position: Position, piece: Piece | null): void {
+        this._board[position.row][position.col] = piece;
     }
 }
 
