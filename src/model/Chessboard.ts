@@ -189,16 +189,17 @@ class Chessboard {
      * @returns {Promise<void>}
      */
     public async start(waitForPlayer = true): Promise<void> {
-        while (true) {
+        let moveAvailable = true;
+
+        while (moveAvailable) {
             const move = await this._opponents[this._currentOpponentIndex].getMoveToPlay(waitForPlayer);
 
             if (move === null) {
-                break;
+                moveAvailable = false;
             } else {
                 this._playMove(move);
+                this._currentOpponentIndex = (this._currentOpponentIndex + 1) % 2;
             }
-
-            this._currentOpponentIndex = (this._currentOpponentIndex + 1) % 2;
         }
 
         console.info("No more available moves");
@@ -326,7 +327,7 @@ class Chessboard {
         this._opponents[ownIndex] = opp;
 
         let color = Math.random() > 0.5 ? Color.White : Color.Black;
-        if (this._opponents[otherIndex] !== undefined) {
+        if (this._opponents[otherIndex]) {
             color = getOppositeColor(this._opponents[otherIndex].ownColor);
         }
 
@@ -361,11 +362,11 @@ class Chessboard {
         // Set the pieces
         for (let row = 0; row < this.NB_ROWS; ++row) {
             let col = 0;
-            for (let c of rowsFEN[row]) {
-                if (/[0-9]/.test(c)) {
-                    col += Number(c);
+            for (const char of rowsFEN[row]) {
+                if (/[0-9]/.test(char)) {
+                    col += Number(char);
                 } else {
-                    const p = Piece.createFromFEN(c, this, new Position(row, col));
+                    const p = Piece.createFromFEN(char, this, new Position(row, col));
                     this._setPiece(new Position(row, col), p);
                     this._pieces[p.color].push(p);
                     ++col;
