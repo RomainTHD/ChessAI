@@ -18,7 +18,7 @@ enum Type {
  * @param {Color} color Color
  * @returns {string} FEN
  */
-function getFEN_FromType(type: Type, color: Color): string {
+function typeToFEN(type: Type, color: Color): string {
     let FEN: string;
 
     switch (type) {
@@ -59,5 +59,5 @@ function getFEN_FromType(type: Type, color: Color): string {
 
 export {
     Type,
-    getFEN_FromType,
+    typeToFEN,
 };

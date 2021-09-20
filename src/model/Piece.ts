@@ -3,7 +3,6 @@ import {
     Bishop,
     Chessboard,
     Color,
-    getFEN_FromType,
     getOppositeColor,
     King,
     Knight,
@@ -13,6 +12,7 @@ import {
     Queen,
     Rook,
     Type,
+    typeToFEN,
 } from "model";
 
 /**
@@ -171,7 +171,7 @@ abstract class Piece {
      * @returns {string} FEN character of the current piece
      */
     public getFEN(): string {
-        return getFEN_FromType(this.type, this.color);
+        return typeToFEN(this.type, this.color);
     }
 
     /**
