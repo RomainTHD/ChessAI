@@ -1,10 +1,15 @@
+import assert from "assert";
 import {
     Move,
     Piece,
     Position,
+    Rook,
     Type,
 } from "model";
 
+/**
+ * King
+ */
 class King extends Piece {
     public readonly type = Type.King;
 
@@ -21,21 +26,26 @@ class King extends Piece {
         this._checkStraightLines(new Position(1, -1), moves, 1);
 
         if (!this.hasMoved) {
+            // Castling detection, only if the king has not moved
+
             const checkCastling = (rowLimit: number, rowDir: number) => {
                 let emptyRow = true;
                 for (let i = 1; i <= rowLimit; ++i) {
-                    if (this.board.getPiece(this.position.addCol(i * rowDir)) !== null) {
+                    // Empty row up to the rook
+                    if (this.board.getPiece(this.position.addCols(i * rowDir)) !== null) {
                         emptyRow = false;
                         break;
                     }
                 }
 
                 if (emptyRow) {
-                    const rook = this.board.getPiece(this.position.addCol((rowLimit + 1) * rowDir));
+                    const rook = this.board.getPiece(this.position.addCols((rowLimit + 1) * rowDir));
                     if (rook !== null && rook.type === Type.Rook && !rook.hasMoved) {
-                        const kingPos = this.position.addCol(2 * rowDir);
-                        const rookPos = rook.position.addCol(rowLimit * rowDir * -1);
-                        moves.push(Move.fromCastling(this, kingPos, rook, rookPos));
+                        // Rook not moved, we can move it
+                        assert(rook instanceof Rook);
+                        const kingPos = this.position.addCols(2 * rowDir);
+                        const rookPos = rook.position.addCols(rowLimit * rowDir * -1);
+                        moves.push(Move.fromCastling(this, kingPos, rook as Rook, rookPos));
                     }
                 }
             };

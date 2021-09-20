@@ -5,6 +5,9 @@ import {
     Type,
 } from "model";
 
+/**
+ * Knight
+ */
 class Knight extends Piece {
     public readonly type = Type.Knight;
 

@@ -2,12 +2,24 @@ import assert from "assert";
 import {Move} from "model";
 import {Opponent} from "model/Opponent";
 
+/**
+ * Player opponent
+ */
 class Player extends Opponent {
+    /**
+     * Hacky way to block the function `getMoveToPlay` while the player haven't selected its move to play
+     * @type {((m: (Move | null)) => void) | null}
+     * @private
+     */
     private _resolve: ((m: Move | null) => void) | null = null;
 
-    public moveSelected(m: Move | null): void {
+    /**
+     * The player selected a move to play
+     * @param {Move | null} move Move to play
+     */
+    public moveSelected(move: Move | null): void {
         assert(this._resolve !== null);
-        this._resolve(m);
+        this._resolve(move);
     }
 
     public async getMoveToPlay(): Promise<Move | null> {

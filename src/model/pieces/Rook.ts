@@ -5,6 +5,9 @@ import {
 import {Move} from "model/Move";
 import {Type} from "model/Type";
 
+/**
+ * Rook
+ */
 class Rook extends Piece {
     public readonly type = Type.Rook;
 

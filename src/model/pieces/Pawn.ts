@@ -7,6 +7,9 @@ import {
     Type,
 } from "model";
 
+/**
+ * Pawn
+ */
 class Pawn extends Piece {
     public readonly type = Type.Pawn;
 
@@ -15,6 +18,7 @@ class Pawn extends Piece {
         const direction = this.color === Color.White ? 1 : -1;
         const moves     = [] as Move[];
 
+        // Useful for the pawns on the initial row
         let upperBound = 1;
         if ((this.color === Color.White && this.position.row === 1) ||
             (this.color === Color.Black && this.position.row === this.board.NB_ROWS - 2)
@@ -24,7 +28,7 @@ class Pawn extends Piece {
 
         for (let i = 1; i <= upperBound; ++i) {
             const subMoves = [] as Move[];
-            const p        = this.position.addRow(i * direction);
+            const p        = this.position.addRows(i * direction);
             const res      = this._addMoveIfAvailable(p, subMoves);
             if (res === MoveResult.Occupied) {
                 moves.push(subMoves[0]);
@@ -33,6 +37,7 @@ class Pawn extends Piece {
             }
         }
 
+        // Checks for the pieces in its diagonal
         const checkDiagFunction = (position: Position) => {
             if (this.board.isValidPosition(position)) {
                 const target = this.board.getPiece(position);
@@ -50,3 +55,5 @@ class Pawn extends Piece {
 }
 
 export {Pawn};
+
+// TODO: En passant & promotion

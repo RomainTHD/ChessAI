@@ -1,5 +1,8 @@
 import {Color} from "model";
 
+/**
+ * Piece type
+ */
 enum Type {
     Bishop = "bishop",
     King   = "king",
@@ -9,7 +12,13 @@ enum Type {
     Rook   = "rook",
 }
 
-function getFENfromType(type: Type, color: Color): string {
+/**
+ * Get the FEN of a type and a color
+ * @param {Type} type Type
+ * @param {Color} color Color
+ * @returns {string} FEN
+ */
+function getFEN_FromType(type: Type, color: Color): string {
     let FEN: string;
 
     switch (type) {
@@ -50,5 +59,5 @@ function getFENfromType(type: Type, color: Color): string {
 
 export {
     Type,
-    getFENfromType,
+    getFEN_FromType,
 };
