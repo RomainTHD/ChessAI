@@ -84,7 +84,7 @@ class Chessboard {
      * @param {string} FEN FEN initializer
      * @see https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation FEN on Wikipedia
      */
-    public constructor(FEN: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+    public constructor(FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
         this._board           = [];
         this._pieces          = {
             [Color.Black]: [],
