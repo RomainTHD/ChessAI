@@ -8,9 +8,9 @@ enum Color {
 
 /**
  * @param {Color} color Color
- * @returns {Color.Black | Color.White} Opposite color
+ * @returns {Color} Opposite color
  */
-function getOppositeColor(color: Color) {
+function getOppositeColor(color: Color): Color {
     return (color === Color.White) ? Color.Black : Color.White;
 }
 
