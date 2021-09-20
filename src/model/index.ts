@@ -1,10 +1,8 @@
-export {Chessboard} from "./Chessboard";
-export {Color} from "./Color";
-export {Move} from "./Move";
-export {
-    Piece,
-    MoveResult,
-} from "./Piece";
-export {Position} from "./Position";
-export {Type} from "./Type";
+export * from "./Chessboard";
+export * from "./Color";
+export * from "./Move";
+export * from "./Piece";
+export * from "./Position";
+export * from "./Type";
+
 export * from "./pieces";
