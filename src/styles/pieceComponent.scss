@@ -16,7 +16,7 @@
             background-color: $in-color;
 
             // BEM convention
-            &.piece--active-true {
+            &.piece--hovered-true {
                 @include inner-shadow($out-color, $in-color, true);
             }
         }

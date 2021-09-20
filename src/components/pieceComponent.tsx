@@ -5,6 +5,9 @@ import {
 import React from "react";
 import "styles/pieceComponent.scss";
 
+/**
+ * Piece component
+ */
 class PieceComponent extends React.Component<PieceComponentProps, PieceComponentState> {
     public constructor(props: PieceComponentProps) {
         super(props);
@@ -39,11 +42,11 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
             <td
                 className={
                     "piece " +
-                    `${(isHovered && activeColor) || canBeOccupied ? "piece--clickable" : ""} ` +
-                    `piece--color-${this.props.backgroundColor} ` +
-                    `piece--active-${this.state.isHovered} ` +
-                    `piece--occupation-${this.props.canBeOccupied && !this.props.canBeTaken} ` +
-                    `piece--taken-${this.props.canBeTaken} `
+                    `${(isHovered && activeColor) || canBeOccupied ? "piece--clickable" : ""} ` + // Clickable
+                    `piece--color-${this.props.backgroundColor} ` + // Piece background color
+                    `piece--hovered-${this.state.isHovered} ` + // Hovered by the cursor
+                    `piece--occupation-${this.props.canBeOccupied && !this.props.canBeTaken} ` + // Piece can move here
+                    `piece--taken-${this.props.canBeTaken} ` // Piece can move here by taking another piece
                 }
                 onMouseEnter={() => this.setState({
                     isHovered: true,
