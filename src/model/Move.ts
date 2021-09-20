@@ -1,22 +1,64 @@
 import {
+    King,
     Piece,
     Position,
+    Rook,
 } from "model";
 
+/**
+ * Chess move
+ */
 class Move {
+    /**
+     * Parent piece to move
+     * @type {Piece}
+     */
     public readonly parentPiece: Piece;
+
+    /**
+     * Target position
+     * @type {Position}
+     */
     public readonly position: Position;
+
+    /**
+     * Piece taken or not
+     * @type {boolean}
+     */
     public readonly pieceTaken: boolean;
 
+    /**
+     * Castling or not
+     * @type {boolean}
+     */
     public readonly isCastling: boolean;
-    public readonly castlingRook: Piece | null;
+
+    /**
+     * If castling, the rook used
+     * @type {Rook | null}
+     */
+    public readonly castlingRook: Rook | null;
+
+    /**
+     * If castling, the rook target position
+     * @type {Position | null}
+     */
     public readonly castlingRookPosition: Position | null;
 
+    /**
+     * Constructor
+     * @param {Piece} parentPiece Parent piece to move
+     * @param {Position} position Target position
+     * @param {boolean} pieceTaken Piece taken or not
+     * @param {Rook | null} castlingRook If castling, the rook used
+     * @param {Position | null} castlingRookPosition If castling, the rook target position
+     * @private
+     */
     private constructor(
         parentPiece: Piece,
         position: Position,
         pieceTaken: boolean,
-        castlingRook: Piece | null            = null,
+        castlingRook: Rook | null             = null,
         castlingRookPosition: Position | null = null,
     ) {
         this.parentPiece          = parentPiece;
@@ -27,14 +69,13 @@ class Move {
         this.castlingRookPosition = castlingRookPosition;
     }
 
-    public get row(): number {
-        return this.position.row;
-    }
-
-    public get col(): number {
-        return this.position.col;
-    }
-
+    /**
+     * From an offset
+     * @param {Piece} parentPiece Parent piece to move
+     * @param {Position} offset Target offset
+     * @param {boolean} pieceTaken Piece taken or not
+     * @returns {Move}
+     */
     public static fromOffset(parentPiece: Piece, offset: Position, pieceTaken = false): Move {
         return new Move(
             parentPiece,
@@ -43,6 +84,13 @@ class Move {
         );
     }
 
+    /**
+     * From a position
+     * @param {Piece} parentPiece Parent piece to move
+     * @param {Position} position Target position
+     * @param {boolean} pieceTaken Piece taken or not
+     * @returns {Move}
+     */
     public static fromPosition(parentPiece: Piece, position: Position, pieceTaken = false): Move {
         return new Move(
             parentPiece,
@@ -51,10 +99,18 @@ class Move {
         );
     }
 
+    /**
+     * From castling
+     * @param {King} king King moved
+     * @param {Position} kingNewPosition King target position
+     * @param {Rook} rook Rook moved
+     * @param {Position} rookNewPosition Rook target position
+     * @returns {Move}
+     */
     public static fromCastling(
-        king: Piece,
+        king: King,
         kingNewPosition: Position,
-        rook: Piece,
+        rook: Rook,
         rookNewPosition: Position,
     ): Move {
         return new Move(

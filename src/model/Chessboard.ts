@@ -9,23 +9,82 @@ import {
 } from "model";
 import {Opponent} from "model/Opponent";
 
+/**
+ * Callback called on chessboard update
+ */
 type UpdateCallback = () => void;
 
+/**
+ * Chessboard
+ */
 class Chessboard {
+    /**
+     * Number of rows
+     * @type {number}
+     */
     public readonly NB_ROWS = 8;
+
+    /**
+     * Number of columns
+     * @type {number}
+     */
     public readonly NB_COLS = 8;
 
+    /**
+     * Board per se
+     * @type {(Piece | null)[][]}
+     * @private
+     */
     private readonly _board: (Piece | null)[][];
-    private readonly _pieces: { [c: Color | string]: Piece[] };
-    private readonly _castlingAllowed: { [c: Color | string]: { [s: string]: boolean } };
 
+    /**
+     * Map of all the pieces
+     * @type {{[p: Color | string]: Piece[]}}
+     * @private
+     */
+    private readonly _pieces: { [c: Color | string]: Piece[] };
+
+    /**
+     * Castling allowed for each color and each side (Queen and King side)
+     * @type {{[p: Color | string]: {[p: string | type]: boolean}}}
+     * @private
+     */
+    private readonly _castlingAllowed: { [c: Color | string]: { [s: string | Type]: boolean } };
+
+    /**
+     * Current active color
+     * @type {Color}
+     * @private
+     */
     private _activeColor: Color;
+
+    /**
+     * List of opponents
+     * @type {Opponent[]}
+     * @private
+     */
     private readonly _opponents: Opponent[];
+
+    /**
+     * Index of the current opponent
+     * @type {number}
+     * @private
+     */
     private _currentOpponentIndex: number;
 
+    /**
+     * Callbacks when the board is updated
+     * @type {UpdateCallback[]}
+     * @private
+     */
     private readonly _updateCallbacks: UpdateCallback[];
 
-    public constructor(FEN: string = "") {
+    /**
+     * Constructor
+     * @param {string} FEN FEN initializer
+     * @see https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation FEN on Wikipedia
+     */
+    public constructor(FEN: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
         this._board           = [];
         this._pieces          = {
             [Color.Black]: [],
@@ -49,27 +108,40 @@ class Chessboard {
             this._board.push(currentRow);
         }
 
-        if (FEN === "") {
-            FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        }
-
         this._initializeFromFEN(FEN);
     }
 
+    /**
+     * @returns {Color} Active color
+     */
     public get activeColor(): Color {
         return this._activeColor;
     }
 
+    /**
+     * @returns {Opponent} Player, in a PvE match
+     */
     public get player(): Opponent {
         return this._opponents[0];
     }
 
+    /**
+     * @returns {Opponent} Opponent, in a PvE match
+     */
     public get opponent(): Opponent {
         return this._opponents[1];
     }
 
+    /**
+     * Try a move
+     * @param {Move} move Move to try
+     * @param {(board: Chessboard) => void} tryFunction Code to execute during the move context
+     */
     public tryMove(move: Move, tryFunction: (board: Chessboard) => void): void {
+        // FIXME: This function is definitely not thread-safe
+
         // Save state
+
         const pieceTaken             = this.getPiece(move.position);
         const oldParentPiecePosition = move.parentPiece.position;
 
@@ -111,6 +183,11 @@ class Chessboard {
         }
     }
 
+    /**
+     * Start the game
+     * @param {boolean} waitForPlayer Set to false for benchmarks
+     * @returns {Promise<void>}
+     */
     public async start(waitForPlayer = true): Promise<void> {
         while (true) {
             const move = await this._opponents[this._currentOpponentIndex].getMoveToPlay(waitForPlayer);
@@ -124,45 +201,85 @@ class Chessboard {
             this._currentOpponentIndex = (this._currentOpponentIndex + 1) % 2;
         }
 
-        console.log("No more available moves");
+        console.info("No more available moves");
     }
 
-    public onUpdate(callback: UpdateCallback): void {
+    /**
+     * Add an update callback
+     * @param {UpdateCallback} callback Callback
+     */
+    public addUpdateListener(callback: UpdateCallback): void {
         this._updateCallbacks.push(callback);
     }
 
+    /**
+     * Sets the first opponent
+     * @param {Opponent} opp Opponent
+     */
     public setFirstOpponent(opp: Opponent): void {
-        this._setOpponent(opp, 0, 1);
+        this._setOpponent(opp, 0);
     }
 
+    /**
+     * Sets the second opponent
+     * @param {Opponent} opp Opponent
+     */
     public setSecondOpponent(opp: Opponent): void {
-        this._setOpponent(opp, 1, 0);
+        this._setOpponent(opp, 1);
     }
 
+    /**
+     * @returns {Piece[]} List of all the pieces
+     */
     public getAllPieces(): Piece[] {
         return this._pieces[Color.Black].concat(this._pieces[Color.White]);
     }
 
+    /**
+     * @param {Color} color Pieces color
+     * @returns {Piece[]} List of all the pieces in a specific color
+     */
     public getPieces(color: Color): Piece[] {
         return this._pieces[color];
     }
 
+    /**
+     * @param {Position} position Position
+     * @returns {Piece | null} Single piece at a position
+     */
     public getPiece(position: Position): Piece | null {
         return this._board[position.row][position.col];
     }
 
+    /**
+     * @param {Position} position Position to check
+     * @returns {boolean} Valid position or not
+     */
     public isValidPosition(position: Position): boolean {
         return position.row >= 0 && position.row < this.NB_ROWS && position.col >= 0 && position.col < this.NB_COLS;
     }
 
+    /**
+     * @param {Color} color Color
+     * @param {Type} side Side (Queen or King)
+     * @returns {boolean} Castling allowed on a specific color + side
+     */
     public castlingAllowed(color: Color, side: Type): boolean {
+        assert(side === Type.Queen || side === Type.King);
         return this._castlingAllowed[color][side];
     }
 
+    /**
+     * Plays a move
+     * @param {Move} move Move to play
+     * @param {boolean} notifyUpdate Notify an update to the listeners
+     * @private
+     */
     private _playMove(move: Move, notifyUpdate = true): void {
         assert(move.pieceTaken !== (this.getPiece(move.position) === null));
 
         if (move.pieceTaken) {
+            // Remove the piece from the internal list of all available pieces
             const p = this.getPiece(move.position);
             assert(p !== null);
             for (let i = 0; i < this._pieces[p.color].length; ++i) {
@@ -197,7 +314,15 @@ class Chessboard {
         }
     }
 
-    private _setOpponent(opp: Opponent, ownIndex: number, otherIndex: number): void {
+    /**
+     * Internal function to set the opponents
+     * @param {Opponent} opp Opponent
+     * @param {number} ownIndex Index in the opponent array
+     * @private
+     */
+    private _setOpponent(opp: Opponent, ownIndex: number): void {
+        const otherIndex = ownIndex ^ 1;
+
         this._opponents[ownIndex] = opp;
 
         let color = Math.random() > 0.5 ? Color.White : Color.Black;
@@ -212,6 +337,11 @@ class Chessboard {
         opp.setOwnColor(color);
     }
 
+    /**
+     * Initialize the board from a FEN initializer
+     * @param {string} strFEN FEN
+     * @private
+     */
     private _initializeFromFEN(strFEN: string): void {
         const FEN = strFEN.split(" ");
 
@@ -228,6 +358,7 @@ class Chessboard {
         const rowsFEN = FEN[0].split("/");
         assert(rowsFEN.length === this.NB_ROWS, "Invalid FEN pieces length");
 
+        // Set the pieces
         for (let row = 0; row < this.NB_ROWS; ++row) {
             let col = 0;
             for (let c of rowsFEN[row]) {
@@ -242,6 +373,7 @@ class Chessboard {
             }
         }
 
+        // Active color
         if (FEN[1] === "b") {
             this._activeColor = Color.Black;
         } else if (FEN[1] === "w") {
@@ -250,6 +382,7 @@ class Chessboard {
             throw new Error("Invalid FEN active color");
         }
 
+        // Castling
         this._castlingAllowed[Color.White] = {
             [Type.King]: FEN[2].includes("K"),
             [Type.Queen]: FEN[2].includes("Q"),
@@ -261,6 +394,12 @@ class Chessboard {
         };
     }
 
+    /**
+     * Set a piece
+     * @param {Position} position Position
+     * @param {Piece | null} piece New piece
+     * @private
+     */
     private _setPiece(position: Position, piece: Piece | null): void {
         this._board[position.row][position.col] = piece;
     }
