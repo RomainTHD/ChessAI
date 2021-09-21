@@ -117,7 +117,7 @@ abstract class Piece {
     public static createFromFEN(FEN: string, board: Chessboard, position: Position): Piece {
         assert(/[bknpqr]/i.test(FEN), "Wrong FEN");
 
-        const color = /[bknpqr]/.test(FEN) ? Color.White : Color.Black;
+        const color = /[bknpqr]/.test(FEN) ? Color.Black : Color.White;
         let piece: Piece;
 
         switch (FEN.toLowerCase()) {

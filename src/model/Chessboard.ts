@@ -216,17 +216,19 @@ class Chessboard {
     /**
      * Sets the first opponent
      * @param {Opponent} opp Opponent
+     * @param {Color | null} forcedColor Forced color
      */
-    public setFirstOpponent(opp: Opponent): void {
-        this._setOpponent(opp, 0);
+    public setFirstOpponent(opp: Opponent, forcedColor: Color | null = null): void {
+        this._setOpponent(opp, 0, forcedColor);
     }
 
     /**
      * Sets the second opponent
      * @param {Opponent} opp Opponent
+     * @param {Color | null} forcedColor Forced color
      */
-    public setSecondOpponent(opp: Opponent): void {
-        this._setOpponent(opp, 1);
+    public setSecondOpponent(opp: Opponent, forcedColor: Color | null = null): void {
+        this._setOpponent(opp, 1, forcedColor);
     }
 
     /**
@@ -319,14 +321,20 @@ class Chessboard {
      * Internal function to set the opponents
      * @param {Opponent} opp Opponent
      * @param {number} ownIndex Index in the opponent array
+     * @param {Color | null} forcedColor Forced color
      * @private
      */
-    private _setOpponent(opp: Opponent, ownIndex: number): void {
+    private _setOpponent(opp: Opponent, ownIndex: number, forcedColor: Color | null): void {
         const otherIndex = ownIndex ^ 1;
 
         this._opponents[ownIndex] = opp;
 
         let color = Math.random() > 0.5 ? Color.White : Color.Black;
+
+        if (forcedColor !== null) {
+            color = forcedColor;
+        }
+
         if (this._opponents[otherIndex]) {
             color = getOppositeColor(this._opponents[otherIndex].ownColor);
         }
@@ -344,7 +352,7 @@ class Chessboard {
      * @private
      */
     private _initializeFromFEN(strFEN: string): void {
-        const FEN = strFEN.split(" ");
+        const FEN = strFEN.trim().split(" ");
 
         if (FEN.length === 4) {
             FEN.push("0");
@@ -362,7 +370,7 @@ class Chessboard {
         // Set the pieces
         for (let row = 0; row < this.NB_ROWS; ++row) {
             let col = 0;
-            for (const char of rowsFEN[row]) {
+            for (const char of rowsFEN[this.NB_ROWS - row - 1]) {
                 if (/[0-9]/.test(char)) {
                     col += Number(char);
                 } else {
