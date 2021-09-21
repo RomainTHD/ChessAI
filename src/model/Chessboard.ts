@@ -251,6 +251,10 @@ class Chessboard {
      * @returns {Piece | null} Single piece at a position
      */
     public getPiece(position: Position): Piece | null {
+        if (!this.isValidPosition(position)) {
+            throw new Error(`Invalid position: ${position}`)
+        }
+
         return this._board[position.row][position.col];
     }
 
