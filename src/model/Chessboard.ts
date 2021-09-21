@@ -3,6 +3,7 @@ import {
     Color,
     getOppositeColor,
     Move,
+    Pawn,
     Piece,
     Position,
     Type,
@@ -159,6 +160,12 @@ class Chessboard {
 
         // Revert state
 
+        if (move.isPromotion) {
+            assert(!(move.parentPiece instanceof Pawn));
+            assert(move.promotionNewType !== null);
+            this._replacePiece(move, Type.Pawn);
+        }
+
         if (move.isCastling) {
             assert(move.castlingRook !== null);
             assert(move.castlingRookPosition !== null);
@@ -278,6 +285,19 @@ class Chessboard {
         return this._castlingAllowed[color][side];
     }
 
+    private _replacePiece(move: Move, newType: Type): void {
+        const promotedPiece = Piece.clone(move.parentPiece, newType);
+
+        for (let i = 0; i < this._pieces[move.parentPiece.color].length; ++i) {
+            if (move.parentPiece === this._pieces[move.parentPiece.color][i]) {
+                this._pieces[move.parentPiece.color][i] = promotedPiece;
+                break;
+            }
+        }
+
+        move.replaceParentPiece(promotedPiece);
+    }
+
     /**
      * Plays a move
      * @param {Move} move Move to play
@@ -285,6 +305,13 @@ class Chessboard {
      * @private
      */
     private _playMove(move: Move, notifyUpdate = true): void {
+        if (move.isPromotion) {
+            // We shouldn't only change the piece `type` attribute, because we would have an inconsistent model
+            assert(move.promotionNewType !== null);
+            assert(move.parentPiece instanceof Pawn);
+            this._replacePiece(move, move.promotionNewType);
+        }
+
         assert(move.pieceTaken !== (this.getPiece(move.position) === null));
 
         if (move.pieceTaken) {

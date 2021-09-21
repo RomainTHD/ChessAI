@@ -16,7 +16,7 @@ class Pawn extends Piece {
     public getPseudoLegalMoves(): Move[] {
         // Change direction according to the color
         const direction = this.color === Color.White ? 1 : -1;
-        const moves     = [] as Move[];
+        const rawMoves  = [] as Move[];
 
         // Useful for the pawns on the initial row
         let upperBound = 1;
@@ -31,7 +31,7 @@ class Pawn extends Piece {
             const p        = this.position.addRows(i * direction);
             const res      = this._addMoveIfAvailable(p, subMoves);
             if (res === MoveResult.Occupied) {
-                moves.push(subMoves[0]);
+                rawMoves.push(subMoves[0]);
             } else {
                 break;
             }
@@ -42,7 +42,7 @@ class Pawn extends Piece {
             if (this.board.isValidPosition(position)) {
                 const target = this.board.getPiece(position);
                 if (target !== null && target.color !== this.color) {
-                    moves.push(Move.fromPosition(this, position, true));
+                    rawMoves.push(Move.fromPosition(this, position, true));
                 }
             }
         };
@@ -50,10 +50,24 @@ class Pawn extends Piece {
         checkDiagFunction(this.position.add(new Position(direction, 1)));
         checkDiagFunction(this.position.add(new Position(direction, -1)));
 
+        const moves = [];
+
+        for (const rawMove of rawMoves) {
+            if ((this.color === Color.White && rawMove.position.row === this.board.NB_ROWS - 1) ||
+                (this.color === Color.Black && rawMove.position.row === 0)
+            ) {
+                for (const type of [Type.Bishop, Type.Knight, Type.Queen, Type.Rook]) {
+                    moves.push(Move.fromPromotion(this, rawMove.position, type, rawMove.pieceTaken));
+                }
+            } else {
+                moves.push(rawMove);
+            }
+        }
+
         return moves;
     }
 }
 
 export {Pawn};
 
-// TODO: En passant & promotion
+// TODO: En passant

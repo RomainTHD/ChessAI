@@ -1,20 +1,16 @@
 import {
     King,
+    Pawn,
     Piece,
     Position,
     Rook,
+    Type,
 } from "model";
 
 /**
  * Chess move
  */
 class Move {
-    /**
-     * Parent piece to move
-     * @type {Piece}
-     */
-    public readonly parentPiece: Piece;
-
     /**
      * Target position
      * @type {Position}
@@ -46,12 +42,32 @@ class Move {
     public readonly castlingRookPosition: Position | null;
 
     /**
+     * Promotion or not
+     * @type {boolean}
+     */
+    public readonly isPromotion: boolean;
+
+    /**
+     * If promotion, new pawn type after a promotion
+     * @type {Type | null}
+     */
+    public readonly promotionNewType: Type | null;
+
+    /**
+     * Parent piece to move
+     * @type {Piece}
+     * @private
+     */
+    private _parentPiece: Piece;
+
+    /**
      * Constructor
      * @param {Piece} parentPiece Parent piece to move
      * @param {Position} position Target position
      * @param {boolean} pieceTaken Piece taken or not
      * @param {Rook | null} castlingRook If castling, the rook used
      * @param {Position | null} castlingRookPosition If castling, the rook target position
+     * @param {Type | null} promotionNewType New pawn type after a promotion
      * @private
      */
     private constructor(
@@ -60,13 +76,23 @@ class Move {
         pieceTaken: boolean,
         castlingRook: Rook | null             = null,
         castlingRookPosition: Position | null = null,
+        promotionNewType: Type | null         = null,
     ) {
-        this.parentPiece          = parentPiece;
+        this._parentPiece         = parentPiece;
         this.position             = position;
         this.pieceTaken           = pieceTaken;
         this.isCastling           = castlingRook !== null;
         this.castlingRook         = castlingRook;
         this.castlingRookPosition = castlingRookPosition;
+        this.isPromotion          = promotionNewType !== null;
+        this.promotionNewType     = promotionNewType;
+    }
+
+    /**
+     * @returns {Piece} Parent piece to move
+     */
+    public get parentPiece(): Piece {
+        return this._parentPiece;
     }
 
     /**
@@ -120,6 +146,29 @@ class Move {
             rook,
             rookNewPosition,
         );
+    }
+
+    /**
+     * From a position
+     * @param {Pawn} pawn Pawn to move
+     * @param {Position} position Target position
+     * @param {Type} newType New pawn type after the promotion
+     * @param {boolean} pieceTaken Piece taken or not
+     * @returns {Move}
+     */
+    public static fromPromotion(pawn: Pawn, position: Position, newType: Type, pieceTaken = false): Move {
+        return new Move(
+            pawn,
+            position,
+            pieceTaken,
+            null,
+            null,
+            newType,
+        );
+    }
+
+    public replaceParentPiece(newParentPiece: Piece): void {
+        this._parentPiece = newParentPiece;
     }
 }
 

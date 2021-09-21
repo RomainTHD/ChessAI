@@ -7,6 +7,7 @@ import {
     Color,
     Piece,
     Position,
+    Type,
 } from "model";
 import {
     Player,
@@ -64,6 +65,8 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
                         if (move.pieceTaken) {
                             canBeTaken = true;
                         }
+
+                        break;
                     }
                 }
 
@@ -108,7 +111,8 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         if (this.state.selectedPiece !== null) {
             // We check if the player selected a move to play
             for (const move of this.state.selectedMoves) {
-                if (move.position.equals(pos)) {
+                if (move.position.equals(pos) && (!move.isPromotion || move.promotionNewType === Type.Queen)) {
+                    // Auto-queen
                     (this.state.chessboard.player as Player).moveSelected(move);
 
                     this.setState({

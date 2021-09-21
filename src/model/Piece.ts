@@ -93,6 +93,17 @@ abstract class Piece {
         this._hasMoved = false;
     }
 
+    public static clone(piece: Piece, newType: Type | null = null): Piece {
+        if (newType === null) {
+            newType = piece.type;
+        }
+
+        const clone = this.createFromFEN(typeToFEN(newType, piece.color), piece.board, piece.position);
+        clone.setMoved();
+
+        return clone;
+    }
+
     /**
      * @returns {boolean} Has already moved once
      */
