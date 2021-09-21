@@ -32,14 +32,16 @@ class King extends Piece {
                 let emptyRow = true;
                 for (let i = 1; i <= rowLimit; ++i) {
                     // Empty row up to the rook
-                    if (this.board.getPiece(this.position.addCols(i * rowDir)) !== null) {
+                    const pos = this.position.addCols(i * rowDir);
+                    if (!this.board.isValidPosition(pos) || this.board.getPiece(pos) !== null) {
                         emptyRow = false;
                         break;
                     }
                 }
 
-                if (emptyRow) {
-                    const rook = this.board.getPiece(this.position.addCols((rowLimit + 1) * rowDir));
+                const rookPos = this.position.addCols((rowLimit + 1) * rowDir);
+                if (emptyRow && this.board.isValidPosition(rookPos)) {
+                    const rook = this.board.getPiece(rookPos);
                     if (rook !== null && rook.type === Type.Rook && !rook.hasMoved) {
                         // Rook not moved, we can move it
                         assert(rook instanceof Rook);
