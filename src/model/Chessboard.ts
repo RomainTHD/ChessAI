@@ -150,6 +150,8 @@ class Chessboard {
         const oldCastlingRookPosition   = move.castlingRook?.position;
         const oldCastlingRookMovedState = move.castlingRook?.hasMoved;
 
+        let pieceTakenIndex = pieceTaken === null ? -1 : this._pieces[pieceTaken.color].indexOf(pieceTaken);
+
         // Try to play
 
         this._playMove(move, false);
@@ -179,7 +181,7 @@ class Chessboard {
 
         if (move.pieceTaken) {
             assert(pieceTaken !== null);
-            this._pieces[pieceTaken.color].push(pieceTaken);
+            this._pieces[pieceTaken.color].splice(pieceTakenIndex, 0, pieceTaken);
         }
     }
 
@@ -252,7 +254,7 @@ class Chessboard {
      */
     public getPiece(position: Position): Piece | null {
         if (!this.isValidPosition(position)) {
-            throw new Error(`Invalid position: ${position}`)
+            throw new Error(`Invalid position: ${position}`);
         }
 
         return this._board[position.row][position.col];
