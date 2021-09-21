@@ -274,18 +274,11 @@ abstract class Piece {
      * @protected
      */
     protected _checkStraightLines(direction: Position, moves: Move[], limit = Infinity): void {
-        let i = 1;
-        while (true) {
-            const p   = this.position.add(new Position(i * direction.row, i * direction.col));
-            const res = this._addMoveIfAvailable(p, moves);
-            if (res !== MoveResult.Occupied) {
-                break;
-            }
-
-            if (i >= limit) {
-                break;
-            }
-
+        let i   = 1;
+        let res = MoveResult.Occupied;
+        while (i <= limit && res === MoveResult.Occupied) {
+            const p = this.position.add(new Position(i * direction.row, i * direction.col));
+            res     = this._addMoveIfAvailable(p, moves);
             ++i;
         }
     }
