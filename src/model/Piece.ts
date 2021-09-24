@@ -93,17 +93,6 @@ abstract class Piece {
         this._hasMoved = false;
     }
 
-    public static clone(piece: Piece, newType: Type | null = null): Piece {
-        if (newType === null) {
-            newType = piece.type;
-        }
-
-        const clone = this.createFromFEN(typeToFEN(newType, piece.color), piece.board, piece.position);
-        clone.setMoved();
-
-        return clone;
-    }
-
     /**
      * @returns {boolean} Has already moved once
      */
@@ -116,6 +105,23 @@ abstract class Piece {
      */
     public get position(): Position {
         return this._position;
+    }
+
+    /**
+     * Clone a piece
+     * @param {Piece} piece Piece to clone
+     * @param {Type | null} newType New piece type, null to keep the same type
+     * @returns {Piece} Cloned piece
+     */
+    public static clone(piece: Piece, newType: Type | null = null): Piece {
+        if (newType === null) {
+            newType = piece.type;
+        }
+
+        const clone = this.createFromFEN(typeToFEN(newType, piece.color), piece.board, piece.position);
+        clone.revertMoved(piece.hasMoved);
+
+        return clone;
     }
 
     /**
@@ -250,6 +256,22 @@ abstract class Piece {
      */
     public setNewPosition(newPos: Position): void {
         this._position = newPos;
+    }
+
+    /**
+     * Test pieces equality
+     * @param {Piece | null} other Piece to compare
+     * @returns {boolean} If these two pieces are equal
+     */
+    public equals(other: Piece | null): boolean {
+        if (other === null) {
+            return false;
+        } else {
+            return this.position.equals(other.position)
+                && this.type === other.type
+                && this.color === other.color
+                && this.hasMoved === other.hasMoved;
+        }
     }
 
     /**

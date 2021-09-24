@@ -128,7 +128,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
 
         if (!hasPlayed && piece !== null && piece.color === this.state.chessboard.activeColor) {
             // We check if the player wants to see the available moves of one of its pieces
-            if (this.state.selectedPiece === piece) {
+            if (piece.equals(this.state.selectedPiece)) {
                 this.setState({
                     selectedMoves: [],
                     selectedPiece: null,

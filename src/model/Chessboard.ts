@@ -160,12 +160,6 @@ class Chessboard {
 
         // Revert state
 
-        if (move.isPromotion) {
-            assert(!(move.parentPiece instanceof Pawn));
-            assert(move.promotionNewType !== null);
-            this._replacePiece(move, Type.Pawn);
-        }
-
         if (move.isCastling) {
             assert(move.castlingRook !== null);
             assert(move.castlingRookPosition !== null);
@@ -189,6 +183,12 @@ class Chessboard {
         if (move.pieceTaken) {
             assert(pieceTaken !== null);
             this._pieces[pieceTaken.color].splice(pieceTakenIndex, 0, pieceTaken);
+        }
+
+        if (move.isPromotion) {
+            assert(!(move.parentPiece instanceof Pawn));
+            assert(move.promotionNewType !== null);
+            this._replacePiece(move, Type.Pawn);
         }
     }
 
@@ -287,14 +287,19 @@ class Chessboard {
 
     private _replacePiece(move: Move, newType: Type): void {
         const promotedPiece = Piece.clone(move.parentPiece, newType);
+        let replaced        = false;
 
         for (let i = 0; i < this._pieces[move.parentPiece.color].length; ++i) {
-            if (move.parentPiece === this._pieces[move.parentPiece.color][i]) {
+            if (move.parentPiece.equals(this._pieces[move.parentPiece.color][i])) {
                 this._pieces[move.parentPiece.color][i] = promotedPiece;
+                replaced                                = true;
                 break;
             }
         }
 
+        assert(replaced, "A promoted piece has not been replaced");
+
+        this._setPiece(move.parentPiece.position, promotedPiece);
         move.replaceParentPiece(promotedPiece);
     }
 
@@ -319,7 +324,7 @@ class Chessboard {
             const p = this.getPiece(move.position);
             assert(p !== null);
             for (let i = 0; i < this._pieces[p.color].length; ++i) {
-                if (p === this._pieces[p.color][i]) {
+                if (p.equals(this._pieces[p.color][i])) {
                     this._pieces[p.color].splice(i, 1);
                     break;
                 }
