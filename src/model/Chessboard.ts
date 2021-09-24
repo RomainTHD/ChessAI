@@ -151,7 +151,7 @@ class Chessboard {
         const oldCastlingRookPosition   = move.castlingRook ? move.castlingRook.position : null;
         const oldCastlingRookMovedState = move.castlingRook ? move.castlingRook.hasMoved : null;
 
-        let pieceTakenIndex = pieceTaken === null ? -1 : this._pieces[pieceTaken.color].indexOf(pieceTaken);
+        const pieceTakenIndex = pieceTaken === null ? -1 : this.getPieces(pieceTaken.color).indexOf(pieceTaken);
 
         // Try to play
 
@@ -181,6 +181,7 @@ class Chessboard {
 
         if (move.pieceTaken) {
             assert(pieceTaken !== null, "Piece taken should not be null");
+            // Insert the piece at the right index to avoid breaking any loop
             this._pieces[pieceTaken.color].splice(pieceTakenIndex, 0, pieceTaken);
         }
 
@@ -242,7 +243,7 @@ class Chessboard {
      * @returns {Piece[]} List of all the pieces
      */
     public getAllPieces(): Piece[] {
-        return this._pieces[Color.Black].concat(this._pieces[Color.White]);
+        return this.getPieces(Color.Black).concat(this.getPieces(Color.White));
     }
 
     /**
@@ -283,14 +284,46 @@ class Chessboard {
         return this._castlingAllowed[color][side];
     }
 
+    /**
+     * Get a piece from the pieces list
+     * @param {Color} color Piece color
+     * @param {number} index Piece index
+     * @returns {Piece} Piece
+     * @private
+     */
+    private _getPieceFromList(color: Color, index: number): Piece {
+        return this._pieces[color][index];
+    }
+
+    /**
+     * Set a piece in the pieces list
+     * @param {Color} color Piece color
+     * @param {number} index Piece index
+     * @param {Piece | null} newPiece Piece to set
+     * @private
+     */
+    private _setPieceFromList(color: Color, index: number, newPiece: Piece | null): void {
+        if (newPiece === null) {
+            this._pieces[color].splice(index, 1);
+        } else {
+            this._pieces[color][index] = newPiece;
+        }
+    }
+
+    /**
+     * Replace a piece. Useful for promotions
+     * @param {Move} move Move played
+     * @param {Type} newType New piece type
+     * @private
+     */
     private _replacePiece(move: Move, newType: Type): void {
         const promotedPiece = Piece.clone(move.parentPiece, newType);
         let replaced        = false;
 
-        for (let i = 0; i < this._pieces[move.parentPiece.color].length; ++i) {
-            if (move.parentPiece.equals(this._pieces[move.parentPiece.color][i])) {
-                this._pieces[move.parentPiece.color][i] = promotedPiece;
-                replaced                                = true;
+        for (let i = 0; i < this.getPieces(move.parentPiece.color).length; ++i) {
+            if (move.parentPiece.equals(this._getPieceFromList(move.parentPiece.color, i))) {
+                this._setPieceFromList(move.parentPiece.color, i, promotedPiece);
+                replaced = true;
                 break;
             }
         }
@@ -319,9 +352,9 @@ class Chessboard {
             // Remove the piece from the internal list of all available pieces
             const p = this.getPiece(move.position);
             assert(p !== null, "Move marked as a capture while the board is empty");
-            for (let i = 0; i < this._pieces[p.color].length; ++i) {
-                if (p.equals(this._pieces[p.color][i])) {
-                    this._pieces[p.color].splice(i, 1);
+            for (let i = 0; i < this.getPieces(p.color).length; ++i) {
+                if (p.equals(this._getPieceFromList(p.color, i))) {
+                    this._setPieceFromList(p.color, i, null);
                     break;
                 }
             }
@@ -359,7 +392,7 @@ class Chessboard {
      * @private
      */
     private _setOpponent(opp: Opponent, ownIndex: number, forcedColor: Color | null): void {
-        const otherIndex = ownIndex ^ 1;
+        const otherIndex = (ownIndex ^ 1) as number;
 
         this._opponents[ownIndex] = opp;
 

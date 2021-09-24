@@ -48,7 +48,7 @@ abstract class Opponent {
     /**
      * @param {Color} color Own color to set
      */
-    public setOwnColor(color: Color) {
+    public setOwnColor(color: Color): void {
         this._ownColor = color;
     }
 

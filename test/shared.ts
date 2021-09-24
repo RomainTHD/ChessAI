@@ -22,7 +22,7 @@ function countFunction(board: Chessboard, depth: number): CountResult {
             promotion: 0,
         } as CountResult;
     } else {
-        let count = {
+        const count = {
             capture: 0,
             castle: 0,
             check: 0,

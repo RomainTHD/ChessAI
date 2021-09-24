@@ -167,6 +167,10 @@ class Move {
         );
     }
 
+    /**
+     * Replace its parent piece
+     * @param {Piece} newParentPiece New parent piece
+     */
     public replaceParentPiece(newParentPiece: Piece): void {
         this._parentPiece = newParentPiece;
     }
