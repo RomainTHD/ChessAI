@@ -72,7 +72,7 @@ class Pawn extends Piece {
                 rawMoves.push(Move.fromPosition(this, position, true));
             }
         }
-    };
+    }
 }
 
 export {Pawn};
