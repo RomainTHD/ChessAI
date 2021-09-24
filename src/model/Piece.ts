@@ -114,7 +114,7 @@ abstract class Piece {
      * @returns {Piece} Cloned piece
      */
     public static clone(piece: Piece, newType: Type | null = null): Piece {
-        let type    = newType === null ? piece.type : newType;
+        const type  = newType === null ? piece.type : newType;
         const clone = this.createFromFEN(typeToFEN(type, piece.color), piece.board, piece.position);
         clone.revertMoved(piece.hasMoved);
         return clone;

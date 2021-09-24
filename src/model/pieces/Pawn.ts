@@ -18,6 +18,15 @@ class Pawn extends Piece {
         const direction = this.color === Color.White ? 1 : -1;
         const rawMoves  = [] as Move[];
 
+        this._checkInFront(rawMoves, direction);
+
+        this._checkDiagonals(rawMoves, this.position.add(new Position(direction, 1)));
+        this._checkDiagonals(rawMoves, this.position.add(new Position(direction, -1)));
+
+        return this._checkForPromotions(rawMoves);
+    }
+
+    private _checkInFront(rawMoves: Move[], direction: number): void {
         // Useful for the pawns on the initial row
         let upperBound = 1;
         if ((this.color === Color.White && this.position.row === 1) ||
@@ -36,20 +45,9 @@ class Pawn extends Piece {
                 break;
             }
         }
+    }
 
-        // Checks for the pieces in its diagonal
-        const checkDiagFunction = (position: Position) => {
-            if (this.board.isValidPosition(position)) {
-                const target = this.board.getPiece(position);
-                if (target !== null && target.color !== this.color) {
-                    rawMoves.push(Move.fromPosition(this, position, true));
-                }
-            }
-        };
-
-        checkDiagFunction(this.position.add(new Position(direction, 1)));
-        checkDiagFunction(this.position.add(new Position(direction, -1)));
-
+    private _checkForPromotions(rawMoves: Move[]): Move[] {
         const moves = [];
 
         for (const rawMove of rawMoves) {
@@ -66,6 +64,15 @@ class Pawn extends Piece {
 
         return moves;
     }
+
+    private _checkDiagonals(rawMoves: Move[], position: Position): void {
+        if (this.board.isValidPosition(position)) {
+            const target = this.board.getPiece(position);
+            if (target !== null && target.color !== this.color) {
+                rawMoves.push(Move.fromPosition(this, position, true));
+            }
+        }
+    };
 }
 
 export {Pawn};

@@ -292,7 +292,7 @@ class Chessboard {
      * @private
      */
     private _getPieceFromList(color: Color, index: number): Piece {
-        return this._pieces[color][index];
+        return this.getPieces(color)[index];
     }
 
     /**
@@ -392,7 +392,7 @@ class Chessboard {
      * @private
      */
     private _setOpponent(opp: Opponent, ownIndex: number, forcedColor: Color | null): void {
-        const otherIndex = (ownIndex ^ 1) as number;
+        const otherIndex = ownIndex ^ 1;
 
         this._opponents[ownIndex] = opp;
 
@@ -402,8 +402,8 @@ class Chessboard {
             color = forcedColor;
         }
 
-        if (this._opponents[otherIndex]) {
-            color = getOppositeColor(this._opponents[otherIndex].ownColor);
+        if (this._opponents[otherIndex as number]) {
+            color = getOppositeColor(this._opponents[otherIndex as number].ownColor);
         }
 
         if (color === Color.White) {

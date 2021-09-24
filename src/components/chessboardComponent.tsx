@@ -54,34 +54,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
             const cells = [] as React.ReactNode[];
 
             for (let col = 0; col < this.state.chessboard.NB_COLS; ++col) {
-                const piecePosition = new Position(row, col);
-                let canBeOccupied   = false;
-                let canBeTaken      = false;
-
-                for (const move of this.state.selectedMoves) {
-                    if (move.position.equals(piecePosition)) {
-                        canBeOccupied = true;
-
-                        if (move.pieceTaken) {
-                            canBeTaken = true;
-                        }
-
-                        break;
-                    }
-                }
-
-                const piece = this.state.chessboard.getPiece(piecePosition);
-                cells.push((
-                    <PieceComponent
-                        key={col}
-                        backgroundColor={(row ^ col) % 2 ? Color.White : Color.Black}
-                        canBeOccupied={canBeOccupied}
-                        canBeTaken={canBeTaken}
-                        chessboard={this.state.chessboard}
-                        onClick={() => this._onClick(piecePosition, piece)}
-                        piece={piece}
-                    />
-                ));
+                cells.push(this._renderCell(new Position(row, col)));
             }
 
             rows.push((
@@ -105,40 +78,79 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
         );
     }
 
-    private _onClick(pos: Position, piece: Piece | null): void {
-        let hasPlayed = false;
+    private _renderCell(piecePosition: Position): React.ReactNode {
+        let canBeOccupied = false;
+        let canBeTaken    = false;
 
-        if (this.state.selectedPiece !== null) {
-            // We check if the player selected a move to play
-            for (const move of this.state.selectedMoves) {
-                if (move.position.equals(pos) && (!move.isPromotion || move.promotionNewType === Type.Queen)) {
-                    // Auto-queen
-                    (this.state.chessboard.player as Player).moveSelected(move);
+        for (const move of this.state.selectedMoves) {
+            if (move.position.equals(piecePosition)) {
+                canBeOccupied = true;
 
-                    this.setState({
-                        selectedMoves: [],
-                        selectedPiece: null,
-                    });
-
-                    hasPlayed = true;
-                    break;
+                if (move.pieceTaken) {
+                    canBeTaken = true;
                 }
+
+                break;
             }
         }
 
-        if (!hasPlayed && piece !== null && piece.color === this.state.chessboard.activeColor) {
-            // We check if the player wants to see the available moves of one of its pieces
-            if (piece.equals(this.state.selectedPiece)) {
+        const piece = this.state.chessboard.getPiece(piecePosition);
+
+        return (
+            <PieceComponent
+                backgroundColor={(piecePosition.row ^ piecePosition.col) % 2 ? Color.White : Color.Black}
+                canBeOccupied={canBeOccupied}
+                canBeTaken={canBeTaken}
+                chessboard={this.state.chessboard}
+                onClick={() => this._onClick(piecePosition, piece)}
+                piece={piece}
+            />
+        );
+    }
+
+    private _highlightClickedPiece(clickedPiece: Piece): void {
+        // We check if the player wants to see the available moves of one of its pieces
+        if (clickedPiece.equals(this.state.selectedPiece)) {
+            this.setState({
+                selectedMoves: [],
+                selectedPiece: null,
+            });
+        } else {
+            this.setState({
+                selectedMoves: clickedPiece.getLegalMoves(),
+                selectedPiece: clickedPiece,
+            });
+        }
+    }
+
+    private _playMoveClicked(clickPosition: Position): boolean {
+        // We check if the player selected a move to play
+        for (const move of this.state.selectedMoves) {
+            if (move.position.equals(clickPosition) && (!move.isPromotion || move.promotionNewType === Type.Queen)) {
+                // Auto-queen
+                (this.state.chessboard.player as Player).moveSelected(move);
+
                 this.setState({
                     selectedMoves: [],
                     selectedPiece: null,
                 });
-            } else {
-                this.setState({
-                    selectedMoves: piece.getLegalMoves(),
-                    selectedPiece: piece,
-                });
+
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    private _onClick(clickPosition: Position, clickedPiece: Piece | null): void {
+        let hasPlayed = false;
+
+        if (this.state.selectedPiece !== null) {
+            hasPlayed = this._playMoveClicked(clickPosition);
+        }
+
+        if (!hasPlayed && clickedPiece !== null && clickedPiece.color === this.state.chessboard.activeColor) {
+            this._highlightClickedPiece(clickedPiece);
         }
     }
 }

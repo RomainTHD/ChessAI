@@ -3,7 +3,10 @@ import {
     Piece,
 } from "model";
 import {Opponent} from "model/Opponent";
-import {sleep} from "utils";
+import {
+    shuffleArray,
+    sleep,
+} from "utils";
 
 /**
  * Basic opponent, plays randomly
@@ -14,11 +17,7 @@ class RandomMove extends Opponent {
         const pieces   = [...this.board.getPieces(this.ownColor)];
         let moveToPlay = null as Move | null;
 
-        // Shuffle the pieces
-        for (let i = pieces.length - 1; i > 0; i--) {
-            const j                = Math.floor(Math.random() * (i + 1));
-            [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
-        }
+        shuffleArray(pieces);
 
         while (pieces.length !== 0 && moveToPlay === null) {
             const currentPiece = pieces.pop() as Piece;
