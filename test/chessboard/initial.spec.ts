@@ -4,7 +4,10 @@ import {
     Chessboard,
     Color,
 } from "model";
-import {countFunction} from "../shared";
+import {
+    countFunction,
+    CountResult,
+} from "../shared";
 
 describe("Available moves for start position", () => {
     const FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -23,38 +26,42 @@ describe("Available moves for start position", () => {
 
     const stats = [
         {
-            moves: 1,
-            captures: 0,
-            castles: 0,
-            promotions: 0,
-            checks: 0,
-            checkmates: 0,
+            capture: 0,
+            castle: 0,
+            check: 0,
+            checkmate: 0,
+            enPassant: 0,
+            move: 1,
+            promotion: 0,
         },
         {
-            moves: 20,
-            captures: 0,
-            castles: 0,
-            promotions: 0,
-            checks: 0,
-            checkmates: 0,
+            capture: 0,
+            castle: 0,
+            check: 0,
+            checkmate: 0,
+            enPassant: 0,
+            move: 20,
+            promotion: 0,
         },
         {
-            moves: 400,
-            captures: 0,
-            castles: 0,
-            promotions: 0,
-            checks: 0,
-            checkmates: 0,
+            capture: 0,
+            castle: 0,
+            check: 0,
+            checkmate: 0,
+            enPassant: 0,
+            move: 400,
+            promotion: 0,
         },
         {
-            moves: 8_902,
-            captures: 34,
-            castles: 0,
-            promotions: 0,
-            checks: 0, // TODO: 34
-            checkmates: 0,
+            capture: 34,
+            castle: 0,
+            check: 0, // TODO: 12
+            checkmate: 0,
+            enPassant: 0,
+            move: 8_902,
+            promotion: 0,
         },
-    ];
+    ] as CountResult[];
 
     for (let depth = 0; depth < stats.length; ++depth) {
         it(`should detect the right amount of moves - depth ${depth}`, () => {

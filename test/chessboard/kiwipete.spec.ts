@@ -4,7 +4,10 @@ import {
     Chessboard,
     Color,
 } from "model";
-import {countFunction} from "../shared";
+import {
+    countFunction,
+    CountResult,
+} from "../shared";
 
 describe("Available moves for Kiwipete", () => {
     const FEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -";
@@ -23,30 +26,33 @@ describe("Available moves for Kiwipete", () => {
 
     const stats = [
         {
-            moves: 1,
-            captures: 0,
-            castles: 0,
-            promotions: 0,
-            checks: 0,
-            checkmates: 0,
+            capture: 0,
+            castle: 0,
+            check: 0,
+            checkmate: 0,
+            enPassant: 0,
+            move: 1,
+            promotion: 0,
         },
         {
-            moves: 48,
-            captures: 8,
-            castles: 2,
-            promotions: 0,
-            checks: 0,
-            checkmates: 0,
+            capture: 8,
+            castle: 2,
+            check: 0,
+            checkmate: 0,
+            enPassant: 0,
+            move: 48,
+            promotion: 0,
         },
         {
-            moves: 2039,
-            captures: 351,
-            castles: 91,
-            promotions: 0,
-            checks: 0, // TODO: 3
-            checkmates: 0,
+            capture: 351,
+            castle: 91,
+            check: 0, // TODO: 3
+            checkmate: 0,
+            enPassant: 0, // TODO: 1
+            move: 2039,
+            promotion: 0,
         },
-    ];
+    ] as CountResult[];
 
     for (let depth = 0; depth < stats.length; ++depth) {
         it(`should detect the right amount of moves - depth ${depth}`, () => {
