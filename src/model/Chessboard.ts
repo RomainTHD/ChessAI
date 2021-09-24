@@ -148,8 +148,8 @@ class Chessboard {
 
         const oldMovedState = move.parentPiece.hasMoved;
 
-        const oldCastlingRookPosition   = move.castlingRook?.position;
-        const oldCastlingRookMovedState = move.castlingRook?.hasMoved;
+        const oldCastlingRookPosition   = move.castlingRook ? move.castlingRook.position : null;
+        const oldCastlingRookMovedState = move.castlingRook ? move.castlingRook.hasMoved : null;
 
         let pieceTakenIndex = pieceTaken === null ? -1 : this._pieces[pieceTaken.color].indexOf(pieceTaken);
 
@@ -161,11 +161,10 @@ class Chessboard {
         // Revert state
 
         if (move.isCastling) {
-            assert(move.castlingRook !== null);
-            assert(move.castlingRookPosition !== null);
-            assert(oldCastlingRookPosition !== null);
-            assert(oldCastlingRookPosition instanceof Position);
-            assert(typeof oldCastlingRookMovedState === "boolean");
+            assert(move.castlingRook !== null, "Rook should be defined if castling");
+            assert(move.castlingRookPosition !== null, "Rook destination should be defined if castling");
+            assert(oldCastlingRookPosition !== null, "Previous rook position should have been saved");
+            assert(oldCastlingRookMovedState !== null, "Previous rook state should have been saved");
 
             move.castlingRook.revertMoved(oldCastlingRookMovedState);
             move.castlingRook.setNewPosition(oldCastlingRookPosition);
@@ -181,13 +180,12 @@ class Chessboard {
         this._setPiece(move.parentPiece.position, move.parentPiece);
 
         if (move.pieceTaken) {
-            assert(pieceTaken !== null);
+            assert(pieceTaken !== null, "Piece taken should not be null");
             this._pieces[pieceTaken.color].splice(pieceTakenIndex, 0, pieceTaken);
         }
 
         if (move.isPromotion) {
-            assert(!(move.parentPiece instanceof Pawn));
-            assert(move.promotionNewType !== null);
+            assert(!(move.parentPiece instanceof Pawn), "An already promoted piece cannot be a pawn");
             this._replacePiece(move, Type.Pawn);
         }
     }
@@ -281,7 +279,7 @@ class Chessboard {
      * @returns {boolean} Castling allowed on a specific color + side
      */
     public castlingAllowed(color: Color, side: Type): boolean {
-        assert(side === Type.Queen || side === Type.King);
+        assert(side === Type.Queen || side === Type.King, "Invalid castling side");
         return this._castlingAllowed[color][side];
     }
 
@@ -312,17 +310,15 @@ class Chessboard {
     private _playMove(move: Move, notifyUpdate = true): void {
         if (move.isPromotion) {
             // We shouldn't only change the piece `type` attribute, because we would have an inconsistent model
-            assert(move.promotionNewType !== null);
-            assert(move.parentPiece instanceof Pawn);
+            assert(move.promotionNewType !== null, "The new type must be defined while promoting");
+            assert(move.parentPiece instanceof Pawn, "Only pawn can be promoted");
             this._replacePiece(move, move.promotionNewType);
         }
-
-        assert(move.pieceTaken !== (this.getPiece(move.position) === null));
 
         if (move.pieceTaken) {
             // Remove the piece from the internal list of all available pieces
             const p = this.getPiece(move.position);
-            assert(p !== null);
+            assert(p !== null, "Move marked as a capture while the board is empty");
             for (let i = 0; i < this._pieces[p.color].length; ++i) {
                 if (p.equals(this._pieces[p.color][i])) {
                     this._pieces[p.color].splice(i, 1);
@@ -337,8 +333,8 @@ class Chessboard {
         move.parentPiece.setMoved();
 
         if (move.isCastling) {
-            assert(move.castlingRook !== null);
-            assert(move.castlingRookPosition !== null);
+            assert(move.castlingRook !== null, "Rook should be defined if castling");
+            assert(move.castlingRookPosition !== null, "Rook destination should be defined if castling");
 
             this._setPiece(move.castlingRook.position, null);
             this._setPiece(move.castlingRookPosition, move.castlingRook);

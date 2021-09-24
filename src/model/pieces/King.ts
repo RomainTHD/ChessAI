@@ -44,7 +44,7 @@ class King extends Piece {
                     const rook = this.board.getPiece(rookPos);
                     if (rook !== null && rook.type === Type.Rook && !rook.hasMoved) {
                         // Rook not moved, we can move it
-                        assert(rook instanceof Rook);
+                        assert(rook instanceof Rook, "Invalid model, different rook type and rook class");
                         const kingPos = this.position.addCols(2 * rowDir);
                         const rookPos = rook.position.addCols(rowLimit * rowDir * -1);
                         moves.push(Move.fromCastling(this, kingPos, rook as Rook, rookPos));

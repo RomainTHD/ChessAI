@@ -1,4 +1,3 @@
-import assert from "assert";
 import {Move} from "model";
 import {Opponent} from "model/Opponent";
 
@@ -18,7 +17,10 @@ class Player extends Opponent {
      * @param {Move | null} move Move to play
      */
     public moveSelected(move: Move | null): void {
-        assert(this._resolve !== null);
+        if (this._resolve === null) {
+            throw new Error("Undefined resolve function");
+        }
+
         this._resolve(move);
     }
 
