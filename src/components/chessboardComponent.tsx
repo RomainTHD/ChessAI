@@ -98,6 +98,7 @@ class ChessboardComponent extends React.Component<ChessboardComponentProps, Ches
 
         return (
             <PieceComponent
+                key={piecePosition.toString()}
                 backgroundColor={(piecePosition.row ^ piecePosition.col) % 2 ? Color.White : Color.Black}
                 canBeOccupied={canBeOccupied}
                 canBeTaken={canBeTaken}
