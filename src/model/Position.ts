@@ -1,18 +1,22 @@
 /**
  * Position
  */
-class Position {
+class Position extends Array {
     /**
      * Row
      * @type {number}
      */
-    public readonly row: number;
+    public get row(): number {
+        return this[0];
+    }
 
     /**
      * Column
      * @type {number}
      */
-    public readonly col: number;
+    public get col(): number {
+        return this[1];
+    }
 
     /**
      * Constructor
@@ -20,8 +24,10 @@ class Position {
      * @param {number} col Column
      */
     public constructor(row: number, col: number) {
-        this.row = row;
-        this.col = col;
+        super(2);
+        Object.setPrototypeOf(this, Position.prototype); // Because extending Array, yay to the weird bugs!
+        this[0] = row;
+        this[1] = col;
     }
 
     /**
@@ -40,7 +46,7 @@ class Position {
      * @returns {Position} Sum of this position and the other one
      */
     public add(other: Position): Position {
-        return Position.add(this, other);
+        return new Position(this.row + other.row, this.col + other.col);
     }
 
     /**
@@ -49,7 +55,7 @@ class Position {
      * @returns {Position} New position
      */
     public addRows(rows: number): Position {
-        return this.add(new Position(rows, 0));
+        return new Position(this.row + rows, this.col);
     }
 
     /**
@@ -58,7 +64,7 @@ class Position {
      * @returns {Position} New position
      */
     public addCols(cols: number): Position {
-        return this.add(new Position(0, cols));
+        return new Position(this.row, this.col + cols);
     }
 
     /**
@@ -68,13 +74,6 @@ class Position {
      */
     public equals(other: Position): boolean {
         return this.row === other.row && this.col === other.col;
-    }
-
-    /**
-     * @returns {string} String representation
-     */
-    public toString(): string {
-        return `(${this.row},${this.col})`;
     }
 }
 
