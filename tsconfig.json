@@ -7,7 +7,6 @@
         "alwaysStrict": true,
         "baseUrl": "src",
         "esModuleInterop": true,
-        "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
         "jsx": "react-jsx",

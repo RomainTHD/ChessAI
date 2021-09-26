@@ -31,15 +31,15 @@ class Move {
 
     /**
      * If castling, the rook used
-     * @type {Rook | null}
+     * @type {Rook}
      */
-    public readonly castlingRook: Rook | null;
+    public readonly castlingRook?: Rook;
 
     /**
      * If castling, the rook target position
-     * @type {Position | null}
+     * @type {Position}
      */
-    public readonly castlingRookPosition: Position | null;
+    public readonly castlingRookPosition?: Position;
 
     /**
      * Promotion or not
@@ -49,9 +49,9 @@ class Move {
 
     /**
      * If promotion, new pawn type after a promotion
-     * @type {Type | null}
+     * @type {Type}
      */
-    public readonly promotionNewType: Type | null;
+    public readonly promotionNewType?: Type;
 
     /**
      * Parent piece to move
@@ -65,27 +65,33 @@ class Move {
      * @param {Piece} parentPiece Parent piece to move
      * @param {Position} position Target position
      * @param {boolean} pieceTaken Piece taken or not
-     * @param {Rook | null} castlingRook If castling, the rook used
-     * @param {Position | null} castlingRookPosition If castling, the rook target position
-     * @param {Type | null} promotionNewType New pawn type after a promotion
+     * @param {Rook} castlingRook If castling, the rook used
+     * @param {Position} castlingRookPosition If castling, the rook target position
+     * @param {Type} promotionNewType New pawn type after a promotion
      * @private
      */
     private constructor(
         parentPiece: Piece,
         position: Position,
         pieceTaken: boolean,
-        castlingRook: Rook | null             = null,
-        castlingRookPosition: Position | null = null,
-        promotionNewType: Type | null         = null,
+        castlingRook?: Rook,
+        castlingRookPosition?: Position,
+        promotionNewType?: Type,
     ) {
-        this._parentPiece         = parentPiece;
-        this.position             = position;
-        this.pieceTaken           = pieceTaken;
-        this.isCastling           = castlingRook !== null;
-        this.castlingRook         = castlingRook;
-        this.castlingRookPosition = castlingRookPosition;
-        this.isPromotion          = promotionNewType !== null;
-        this.promotionNewType     = promotionNewType;
+        this._parentPiece = parentPiece;
+        this.position     = position;
+        this.pieceTaken   = pieceTaken;
+
+        this.isCastling = castlingRook !== void 0;
+        if (this.isCastling) {
+            this.castlingRook         = castlingRook;
+            this.castlingRookPosition = castlingRookPosition;
+        }
+
+        this.isPromotion = promotionNewType !== void 0;
+        if (this.isPromotion) {
+            this.promotionNewType = promotionNewType;
+        }
     }
 
     /**
@@ -161,8 +167,8 @@ class Move {
             pawn,
             position,
             pieceTaken,
-            null,
-            null,
+            void 0,
+            void 0,
             newType,
         );
     }
