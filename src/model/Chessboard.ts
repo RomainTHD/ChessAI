@@ -1,12 +1,14 @@
 import assert from "assert";
 import {
     Color,
+    ColorAsKey,
     getOppositeColor,
     Move,
     Pawn,
     Piece,
     Position,
     Type,
+    TypeAsKey,
 } from "model";
 import {Opponent} from "model/Opponent";
 
@@ -43,14 +45,14 @@ class Chessboard {
      * @type {{[p: Color | string]: Piece[]}}
      * @private
      */
-    private readonly _pieces: { [c: Color | string]: Piece[] };
+    private readonly _pieces: { [c: ColorAsKey]: Piece[] };
 
     /**
      * Castling allowed for each color and each side (Queen and King side)
      * @type {{[p: Color | string]: {[p: string | type]: boolean}}}
      * @private
      */
-    private readonly _castlingAllowed: { [c: Color | string]: { [s: string | Type]: boolean } };
+    private readonly _castlingAllowed: { [c: ColorAsKey]: { [s: TypeAsKey]: boolean } };
 
     /**
      * Current active color

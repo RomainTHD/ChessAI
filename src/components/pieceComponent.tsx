@@ -2,6 +2,8 @@ import {
     PieceComponentProps,
     PieceComponentState,
 } from "contexts/pieceComponent";
+import {colorToString} from "model/Color";
+import {typeToString} from "model/Type";
 import React from "react";
 import "styles/pieceComponent.scss";
 
@@ -18,18 +20,6 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
     }
 
     public override render(): React.ReactNode {
-        let content = null as React.ReactNode;
-
-        if (this.props.piece !== null) {
-            content = (
-                <img
-                    className={"piece--content"}
-                    src={`/assets/pieces/${this.props.piece.color}/${this.props.piece.type}.svg`}
-                    alt={this.props.piece.getFEN()}
-                />
-            );
-        }
-
         const isHovered     = this.state.isHovered;
         const canBeOccupied = this.props.canBeOccupied;
         let activeColor     = this.props.piece?.color === this.props.chessboard.activeColor;
@@ -43,7 +33,7 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
                 className={
                     "piece " +
                     `${(isHovered && activeColor) || canBeOccupied ? "piece--clickable" : ""} ` + // Clickable
-                    `piece--color-${this.props.backgroundColor} ` + // Piece background color
+                    `piece--color-${colorToString(this.props.backgroundColor)} ` + // Piece background color
                     `piece--hovered-${this.state.isHovered} ` + // Hovered by the cursor
                     `piece--occupation-${this.props.canBeOccupied && !this.props.canBeTaken} ` + // Piece can move here
                     `piece--taken-${this.props.canBeTaken} ` // Piece can move here by taking another piece
@@ -56,9 +46,26 @@ class PieceComponent extends React.Component<PieceComponentProps, PieceComponent
                 })}
                 onClick={() => this.props.onClick()}
             >
-                {content}
+                {this._renderPiece()}
             </td>
         );
+    }
+
+    private _renderPiece(): React.ReactNode {
+        if (this.props.piece !== null) {
+            const color = colorToString(this.props.piece.color);
+            const type  = typeToString(this.props.piece.type);
+
+            return (
+                <img
+                    className={"piece--content"}
+                    src={`/assets/pieces/${color}/${type}.svg`}
+                    alt={this.props.piece.getFEN()}
+                />
+            );
+        } else {
+            return null;
+        }
     }
 }
 

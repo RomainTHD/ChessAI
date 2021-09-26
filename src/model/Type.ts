@@ -4,12 +4,48 @@ import {Color} from "model";
  * Piece type
  */
 enum Type {
-    Bishop = "bishop",
-    King   = "king",
-    Knight = "knight",
-    Pawn   = "pawn",
-    Queen  = "queen",
-    Rook   = "rook",
+    Bishop,
+    King,
+    Knight,
+    Pawn,
+    Queen,
+    Rook,
+}
+
+/**
+ * Hack, used for object key
+ * @see Type
+ */
+type TypeAsKey = Type | number;
+
+/**
+ * Type to string
+ * @param {Type} type Type
+ * @returns {string} Type as a string
+ */
+function typeToString(type: Type): string {
+    switch (type) {
+        case Type.Bishop:
+            return "bishop";
+
+        case Type.King:
+            return "king";
+
+        case Type.Knight:
+            return "knight";
+
+        case Type.Pawn:
+            return "pawn";
+
+        case Type.Queen:
+            return "queen";
+
+        case Type.Rook:
+            return "rook";
+
+        default:
+            throw new Error("No such piece type");
+    }
 }
 
 /**
@@ -60,4 +96,7 @@ function typeToFEN(type: Type, color: Color): string {
 export {
     Type,
     typeToFEN,
+    typeToString,
 };
+
+export type {TypeAsKey};
