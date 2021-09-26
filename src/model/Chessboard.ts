@@ -136,64 +136,6 @@ class Chessboard {
     }
 
     /**
-     * Try a move
-     * @param {Move} move Move to try
-     * @param {(board: Chessboard) => void} tryFunction Code to execute during the move context
-     */
-    public tryMove(move: Move, tryFunction: (board: Chessboard) => void): void {
-        // FIXME: This function is definitely not thread-safe
-
-        // Save state
-
-        const pieceTaken             = this.getPiece(move.position);
-        const oldParentPiecePosition = move.parentPiece.position;
-
-        const oldMovedState = move.parentPiece.hasMoved;
-
-        const oldCastlingRookPosition   = move.castlingRook ? move.castlingRook.position : null;
-        const oldCastlingRookMovedState = move.castlingRook ? move.castlingRook.hasMoved : null;
-
-        const pieceTakenIndex = pieceTaken === null ? -1 : this.getPieces(pieceTaken.color).indexOf(pieceTaken);
-
-        // Try to play
-
-        this._playMove(move, false);
-        tryFunction(this);
-
-        // Revert state
-
-        if (move.isCastling) {
-            assert(move.castlingRook !== null, "Rook should be defined if castling");
-            assert(move.castlingRookPosition !== null, "Rook destination should be defined if castling");
-            assert(oldCastlingRookPosition !== null, "Previous rook position should have been saved");
-            assert(oldCastlingRookMovedState !== null, "Previous rook state should have been saved");
-
-            move.castlingRook.revertMoved(oldCastlingRookMovedState);
-            move.castlingRook.setNewPosition(oldCastlingRookPosition);
-            this._setPiece(move.castlingRookPosition, null);
-            this._setPiece(move.castlingRook.position, move.castlingRook);
-        }
-
-        this._activeColor = getOppositeColor(this._activeColor);
-
-        move.parentPiece.revertMoved(oldMovedState);
-        move.parentPiece.setNewPosition(oldParentPiecePosition);
-        this._setPiece(move.position, pieceTaken);
-        this._setPiece(move.parentPiece.position, move.parentPiece);
-
-        if (move.pieceTaken) {
-            assert(pieceTaken !== null, "Piece taken should not be null");
-            // Insert the piece at the right index to avoid breaking any loop
-            this._pieces[pieceTaken.color].splice(pieceTakenIndex, 0, pieceTaken);
-        }
-
-        if (move.isPromotion) {
-            assert(!(move.parentPiece instanceof Pawn), "An already promoted piece cannot be a pawn");
-            this._replacePiece(move, Type.Pawn);
-        }
-    }
-
-    /**
      * Start the game
      * @param {boolean} waitForPlayer Set to false for benchmarks
      * @returns {Promise<void>}
@@ -345,7 +287,7 @@ class Chessboard {
     private _playMove(move: Move, notifyUpdate = true): void {
         if (move.isPromotion) {
             // We shouldn't only change the piece `type` attribute, because we would have an inconsistent model
-            assert(move.promotionNewType !== null, "The new type must be defined while promoting");
+            assert(move.promotionNewType !== void 0, "The new type must be defined while promoting");
             assert(move.parentPiece instanceof Pawn, "Only pawn can be promoted");
             this._replacePiece(move, move.promotionNewType);
         }
@@ -368,8 +310,8 @@ class Chessboard {
         move.parentPiece.setMoved();
 
         if (move.isCastling) {
-            assert(move.castlingRook !== null, "Rook should be defined if castling");
-            assert(move.castlingRookPosition !== null, "Rook destination should be defined if castling");
+            assert(move.castlingRook, "Rook should be defined if castling");
+            assert(move.castlingRookPosition, "Rook destination should be defined if castling");
 
             this._setPiece(move.castlingRook.position, null);
             this._setPiece(move.castlingRookPosition, move.castlingRook);
@@ -383,6 +325,64 @@ class Chessboard {
             for (const callback of this._updateCallbacks) {
                 callback();
             }
+        }
+    }
+
+    /**
+     * Try a move
+     * @param {Move} move Move to try
+     * @param {(board: Chessboard) => void} tryFunction Code to execute during the move context
+     */
+    public tryMove(move: Move, tryFunction: (board: Chessboard) => void): void {
+        // FIXME: This function is definitely not thread-safe
+
+        // Save state
+
+        const pieceTaken             = this.getPiece(move.position);
+        const oldParentPiecePosition = move.parentPiece.position;
+
+        const oldMovedState = move.parentPiece.hasMoved;
+
+        const oldCastlingRookPosition   = move.castlingRook ? move.castlingRook.position : null;
+        const oldCastlingRookMovedState = move.castlingRook ? move.castlingRook.hasMoved : null;
+
+        const pieceTakenIndex = pieceTaken === null ? -1 : this.getPieces(pieceTaken.color).indexOf(pieceTaken);
+
+        // Try to play
+
+        this._playMove(move, false);
+        tryFunction(this);
+
+        // Revert state
+
+        if (move.isCastling) {
+            assert(move.castlingRook, "Rook should be defined if castling");
+            assert(move.castlingRookPosition, "Rook destination should be defined if castling");
+            assert(oldCastlingRookPosition, "Previous rook position should have been saved");
+            assert(oldCastlingRookMovedState !== null, "Previous rook state should have been saved");
+
+            move.castlingRook.revertMoved(oldCastlingRookMovedState);
+            move.castlingRook.setNewPosition(oldCastlingRookPosition);
+            this._setPiece(move.castlingRookPosition, null);
+            this._setPiece(move.castlingRook.position, move.castlingRook);
+        }
+
+        this._activeColor = getOppositeColor(this._activeColor);
+
+        move.parentPiece.revertMoved(oldMovedState);
+        move.parentPiece.setNewPosition(oldParentPiecePosition);
+        this._setPiece(move.position, pieceTaken);
+        this._setPiece(move.parentPiece.position, move.parentPiece);
+
+        if (move.pieceTaken) {
+            assert(pieceTaken !== null, "Piece taken should not be null");
+            // Insert the piece at the right index to avoid breaking any loop
+            this._pieces[pieceTaken.color].splice(pieceTakenIndex, 0, pieceTaken);
+        }
+
+        if (move.isPromotion) {
+            assert(!(move.parentPiece instanceof Pawn), "An already promoted piece cannot be a pawn");
+            this._replacePiece(move, Type.Pawn);
         }
     }
 
