@@ -25,7 +25,8 @@
         "react": "set BROWSER=none && npm start",
         "start": "set PORT=%REACT_PORT% && react-scripts start",
         "test-react": "react-scripts test",
-        "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && mocha -r ts-node/register -r tsconfig-paths/register test/**/*.spec.ts"
+        "test": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && mocha -r ts-node/register -r tsconfig-paths/register test/*/**/*.spec.ts",
+        "test-perf": "set TS_NODE_COMPILER_OPTIONS={\"module\":\"commonjs\"} && mocha -r ts-node/register -r tsconfig-paths/register test/performance.spec.ts"
     },
     "eslintConfig": {
         "extends": [
