@@ -102,21 +102,6 @@ class Move {
     }
 
     /**
-     * From an offset
-     * @param {Piece} parentPiece Parent piece to move
-     * @param {Position} offset Target offset
-     * @param {boolean} pieceTaken Piece taken or not
-     * @returns {Move}
-     */
-    public static fromOffset(parentPiece: Piece, offset: Position, pieceTaken = false): Move {
-        return new Move(
-            parentPiece,
-            parentPiece.position.add(offset),
-            pieceTaken,
-        );
-    }
-
-    /**
      * From a position
      * @param {Piece} parentPiece Parent piece to move
      * @param {Position} position Target position
@@ -126,7 +111,7 @@ class Move {
     public static fromPosition(parentPiece: Piece, position: Position, pieceTaken = false): Move {
         return new Move(
             parentPiece,
-            position,
+            position.clone(),
             pieceTaken,
         );
     }
@@ -147,10 +132,10 @@ class Move {
     ): Move {
         return new Move(
             king,
-            kingNewPosition,
+            kingNewPosition.clone(),
             false,
             rook,
-            rookNewPosition,
+            rookNewPosition.clone(),
         );
     }
 
@@ -165,7 +150,7 @@ class Move {
     public static fromPromotion(pawn: Pawn, position: Position, newType: Type, pieceTaken = false): Move {
         return new Move(
             pawn,
-            position,
+            position.clone(),
             pieceTaken,
             void 0,
             void 0,

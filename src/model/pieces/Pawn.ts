@@ -20,8 +20,8 @@ class Pawn extends Piece {
 
         this._checkInFront(rawMoves, direction);
 
-        this._checkDiagonals(rawMoves, this.position.add(new Position(direction, 1)));
-        this._checkDiagonals(rawMoves, this.position.add(new Position(direction, -1)));
+        this._checkDiagonals(rawMoves, Position.addCoords(this.position, direction, 1));
+        this._checkDiagonals(rawMoves, Position.addCoords(this.position, direction, -1));
 
         return this._checkForPromotions(rawMoves);
     }
@@ -37,8 +37,7 @@ class Pawn extends Piece {
 
         for (let i = 1; i <= upperBound; ++i) {
             const subMoves = [] as Move[];
-            const p        = this.position.addRows(i * direction);
-            const res      = this._addMoveIfAvailable(p, subMoves);
+            const res      = this._addMoveIfAvailable(Position.addRows(this.position, i * direction), subMoves);
             if (res === MoveResult.Occupied) {
                 rawMoves.push(subMoves[0]);
             } else {

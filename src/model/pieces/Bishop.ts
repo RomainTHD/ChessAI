@@ -13,11 +13,16 @@ class Bishop extends Piece {
 
     public getPseudoLegalMoves(): Move[] {
         const moves = [] as Move[];
+        const dir   = new Position();
 
-        this._checkStraightLines(new Position(-1, -1), moves);
-        this._checkStraightLines(new Position(-1, 1), moves);
-        this._checkStraightLines(new Position(1, 1), moves);
-        this._checkStraightLines(new Position(1, -1), moves);
+        dir.set(-1, -1);
+        this._checkStraightLines(dir, moves);
+        dir.set(-1, 1);
+        this._checkStraightLines(dir, moves);
+        dir.set(1, 1);
+        this._checkStraightLines(dir, moves);
+        dir.set(1, -1);
+        this._checkStraightLines(dir, moves);
 
         return moves;
     }

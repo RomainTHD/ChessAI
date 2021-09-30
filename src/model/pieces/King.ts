@@ -15,38 +15,40 @@ class King extends Piece {
 
     public getPseudoLegalMoves(): Move[] {
         const moves = [] as Move[];
+        const dir   = new Position();
 
-        this._checkStraightLines(new Position(-1, 0), moves, 1);
-        this._checkStraightLines(new Position(0, -1), moves, 1);
-        this._checkStraightLines(new Position(0, 1), moves, 1);
-        this._checkStraightLines(new Position(1, 0), moves, 1);
-        this._checkStraightLines(new Position(-1, -1), moves, 1);
-        this._checkStraightLines(new Position(-1, 1), moves, 1);
-        this._checkStraightLines(new Position(1, 1), moves, 1);
-        this._checkStraightLines(new Position(1, -1), moves, 1);
+        for (let row = -1; row <= 1; ++row) {
+            for (let col = -1; col <= 1; ++col) {
+                if (row !== 0 || col !== 0) {
+                    dir.set(row, col);
+                    this._checkStraightLines(dir, moves, 1);
+                }
+            }
+        }
 
         if (!this.hasMoved) {
             // Castling detection, only if the king has not moved
 
             const checkCastling = (rowLimit: number, rowDir: number) => {
                 let emptyRow = true;
+                const pos    = this.position.clone();
                 for (let i = 1; i <= rowLimit; ++i) {
                     // Empty row up to the rook
-                    const pos = this.position.addCols(i * rowDir);
+                    pos.addCols(rowDir);
                     if (!this.board.isValidPosition(pos) || this.board.getPiece(pos) !== null) {
                         emptyRow = false;
                         break;
                     }
                 }
 
-                const rookPos = this.position.addCols((rowLimit + 1) * rowDir);
+                const rookPos = Position.addCols(this.position, (rowLimit + 1) * rowDir);
                 if (emptyRow && this.board.isValidPosition(rookPos)) {
                     const rook = this.board.getPiece(rookPos);
                     if (rook !== null && rook.type === Type.Rook && !rook.hasMoved) {
                         // Rook not moved, we can move it
                         assert(rook instanceof Rook, "Invalid model, different rook type and rook class");
-                        const kingPos = this.position.addCols(2 * rowDir);
-                        const rookPos = rook.position.addCols(rowLimit * rowDir * -1);
+                        const kingPos = Position.addCols(this.position, 2 * rowDir);
+                        const rookPos = Position.addCols(rook.position, rowLimit * rowDir * -1);
                         moves.push(Move.fromCastling(this, kingPos, rook as Rook, rookPos));
                     }
                 }

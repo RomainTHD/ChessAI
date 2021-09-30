@@ -13,11 +13,16 @@ class Rook extends Piece {
 
     public getPseudoLegalMoves(): Move[] {
         const moves = [] as Move[];
+        const dir   = new Position();
 
-        this._checkStraightLines(new Position(-1, 0), moves);
-        this._checkStraightLines(new Position(0, -1), moves);
-        this._checkStraightLines(new Position(0, 1), moves);
-        this._checkStraightLines(new Position(1, 0), moves);
+        dir.set(-1, 0);
+        this._checkStraightLines(dir, moves);
+        dir.set(0, -1);
+        this._checkStraightLines(dir, moves);
+        dir.set(0, 1);
+        this._checkStraightLines(dir, moves);
+        dir.set(1, 0);
+        this._checkStraightLines(dir, moves);
 
         return moves;
     }

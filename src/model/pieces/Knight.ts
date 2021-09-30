@@ -12,18 +12,13 @@ class Knight extends Piece {
     public readonly type = Type.Knight;
 
     public getPseudoLegalMoves(): Move[] {
-        const moves   = [] as Move[];
-        const offsets = [] as Position[];
+        const moves = [] as Move[];
 
         for (const rDir of [-1, 1]) {
             for (const cDir of [-1, 1]) {
-                offsets.push(new Position(rDir, cDir * 2));
-                offsets.push(new Position(rDir * 2, cDir));
+                this._addMoveIfAvailable(Position.addCoords(this.position, rDir, cDir * 2), moves);
+                this._addMoveIfAvailable(Position.addCoords(this.position, rDir * 2, cDir), moves);
             }
-        }
-
-        for (const offset of offsets) {
-            this._addMoveIfAvailable(this.position.add(offset), moves);
         }
 
         return moves;

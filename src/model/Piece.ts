@@ -303,12 +303,13 @@ abstract class Piece {
      * @protected
      */
     protected _checkStraightLines(direction: Position, moves: Move[], limit = Infinity): void {
-        let i   = 1;
-        let res = MoveResult.Occupied;
-        while (i <= limit && res === MoveResult.Occupied) {
-            const p = this.position.add(new Position(i * direction.row, i * direction.col));
-            res     = this._addMoveIfAvailable(p, moves);
-            ++i;
+        let p = this.position.clone();
+        for (let i = 1; i <= limit; ++i) {
+            p.addCoords(direction.row, direction.col);
+
+            if (this._addMoveIfAvailable(p, moves) !== MoveResult.Occupied) {
+                break;
+            }
         }
     }
 }
