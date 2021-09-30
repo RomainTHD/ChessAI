@@ -4,7 +4,7 @@
     "license": "GPL-3.0-or-later",
     "private": true,
     "dependencies": {
-        "@types/node": "^12.20.24",
+        "@types/node": "^16.10.2",
         "@types/react": "^17.0.20",
         "@types/react-dom": "^17.0.9",
         "bootstrap": "^5.1.1",
