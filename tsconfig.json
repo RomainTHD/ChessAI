@@ -39,7 +39,7 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
         "useUnknownInCatchVariables": true,
-        "target": "es6"
+        "target": "es2017"
     },
     "exclude": [
         "node_modules",

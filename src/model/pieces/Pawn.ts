@@ -13,7 +13,7 @@ import {
 class Pawn extends Piece {
     public readonly type = Type.Pawn;
 
-    public getPseudoLegalMoves(): Move[] {
+    public async getPseudoLegalMoves(): Promise<Move[]> {
         // Change direction according to the color
         const direction = this.color === Color.White ? 1 : -1;
         const rawMoves  = [] as Move[];

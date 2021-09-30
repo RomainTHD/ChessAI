@@ -21,7 +21,7 @@ class RandomMove extends Opponent {
 
         while (pieces.length !== 0 && moveToPlay === null) {
             const currentPiece = pieces.pop() as Piece;
-            const moves        = currentPiece.getLegalMoves();
+            const moves        = await currentPiece.getLegalMoves();
 
             if (moves.length !== 0) {
                 // The selected piece has some legal moves, we randomly pick one

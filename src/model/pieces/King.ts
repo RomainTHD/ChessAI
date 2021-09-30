@@ -13,17 +13,19 @@ import {
 class King extends Piece {
     public readonly type = Type.King;
 
-    public getPseudoLegalMoves(): Move[] {
+    public async getPseudoLegalMoves(): Promise<Move[]> {
         const moves = [] as Move[];
 
-        this._checkStraightLines(new Position(-1, 0), moves, 1);
-        this._checkStraightLines(new Position(0, -1), moves, 1);
-        this._checkStraightLines(new Position(0, 1), moves, 1);
-        this._checkStraightLines(new Position(1, 0), moves, 1);
-        this._checkStraightLines(new Position(-1, -1), moves, 1);
-        this._checkStraightLines(new Position(-1, 1), moves, 1);
-        this._checkStraightLines(new Position(1, 1), moves, 1);
-        this._checkStraightLines(new Position(1, -1), moves, 1);
+        await Promise.all([
+            this._checkStraightLines(new Position(-1, 0), moves, 1),
+            this._checkStraightLines(new Position(0, -1), moves, 1),
+            this._checkStraightLines(new Position(0, 1), moves, 1),
+            this._checkStraightLines(new Position(1, 0), moves, 1),
+            this._checkStraightLines(new Position(-1, -1), moves, 1),
+            this._checkStraightLines(new Position(-1, 1), moves, 1),
+            this._checkStraightLines(new Position(1, 1), moves, 1),
+            this._checkStraightLines(new Position(1, -1), moves, 1),
+        ]);
 
         if (!this.hasMoved) {
             // Castling detection, only if the king has not moved

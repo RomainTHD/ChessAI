@@ -64,8 +64,8 @@ describe("Available moves for start position", () => {
     ] as CountResult[];
 
     for (let depth = 0; depth < stats.length; ++depth) {
-        it(`should detect the right amount of moves - depth ${depth}`, () => {
-            expect(countFunction(new Chessboard(FEN), depth)).to.eql(stats[depth]);
+        it(`should detect the right amount of moves - depth ${depth}`, async () => {
+            expect(await countFunction(new Chessboard(FEN), depth)).to.eql(stats[depth]);
         });
     }
 });

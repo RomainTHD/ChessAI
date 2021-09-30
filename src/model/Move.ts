@@ -1,3 +1,4 @@
+import assert from "assert";
 import {
     King,
     Pawn,
@@ -6,6 +7,15 @@ import {
     Rook,
     Type,
 } from "model";
+
+interface State {
+    pieceTaken: Piece | null,
+    oldParentPiecePosition: Position,
+    oldMovedState: boolean,
+    oldCastlingRookPosition: Position | null;
+    oldCastlingRookMovedState: boolean | null;
+    pieceTakenIndex: number;
+}
 
 /**
  * Chess move
@@ -46,19 +56,18 @@ class Move {
      * @type {boolean}
      */
     public readonly isPromotion: boolean;
-
     /**
      * If promotion, new pawn type after a promotion
      * @type {Type}
      */
     public readonly promotionNewType?: Type;
-
     /**
      * Parent piece to move
      * @type {Piece}
      * @private
      */
     private _parentPiece: Piece;
+    private _state?: State;
 
     /**
      * Constructor
@@ -173,6 +182,15 @@ class Move {
         );
     }
 
+    public setBoardState(state: State): void {
+        this._state = state;
+    }
+
+    public getBoardState(): State {
+        assert(this._state);
+        return this._state;
+    }
+
     /**
      * Replace its parent piece
      * @param {Piece} newParentPiece New parent piece
@@ -183,3 +201,4 @@ class Move {
 }
 
 export {Move};
+export type {State};

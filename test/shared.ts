@@ -10,7 +10,7 @@ interface CountResult {
     promotion: number,
 }
 
-function countFunction(board: Chessboard, depth: number): CountResult {
+async function countFunction(board: Chessboard, depth: number): Promise<CountResult> {
     if (depth === 0) {
         return {
             capture: 0,
@@ -33,18 +33,20 @@ function countFunction(board: Chessboard, depth: number): CountResult {
         } as CountResult;
 
         for (const piece of board.getPieces(board.activeColor)) {
-            const moves = piece.getLegalMoves();
+            const moves = await piece.getLegalMoves();
             for (const move of moves) {
-                board.tryMove(move, (subBoard: Chessboard) => {
-                    const res = countFunction(subBoard, depth - 1);
-                    count.capture += res.capture + Number(move.pieceTaken);
-                    count.castle += res.castle + Number(move.isCastling);
-                    count.check += res.check; // TODO
-                    count.checkmate += res.checkmate; // TODO
-                    count.enPassant += res.enPassant; // TODO
-                    count.move += res.move;
-                    count.promotion += res.promotion + Number(move.isPromotion);
-                });
+                board.applyMove(move);
+
+                const res = await countFunction(board, depth - 1);
+                count.capture += res.capture + Number(move.pieceTaken);
+                count.castle += res.castle + Number(move.isCastling);
+                count.check += res.check; // TODO
+                count.checkmate += res.checkmate; // TODO
+                count.enPassant += res.enPassant; // TODO
+                count.move += res.move;
+                count.promotion += res.promotion + Number(move.isPromotion);
+
+                board.revertMove(move);
             }
         }
 

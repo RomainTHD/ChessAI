@@ -11,13 +11,15 @@ import {
 class Bishop extends Piece {
     public readonly type = Type.Bishop;
 
-    public getPseudoLegalMoves(): Move[] {
+    public async getPseudoLegalMoves(): Promise<Move[]> {
         const moves = [] as Move[];
 
-        this._checkStraightLines(new Position(-1, -1), moves);
-        this._checkStraightLines(new Position(-1, 1), moves);
-        this._checkStraightLines(new Position(1, 1), moves);
-        this._checkStraightLines(new Position(1, -1), moves);
+        await Promise.all([
+            this._checkStraightLines(new Position(-1, -1), moves),
+            this._checkStraightLines(new Position(-1, 1), moves),
+            this._checkStraightLines(new Position(1, 1), moves),
+            this._checkStraightLines(new Position(1, -1), moves),
+        ]);
 
         return moves;
     }

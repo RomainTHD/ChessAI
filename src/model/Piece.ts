@@ -191,57 +191,61 @@ abstract class Piece {
      * List all the pseudo-legal moves, aka even the check moves
      * @returns {Move[]} All pseudo-legal moves
      */
-    public abstract getPseudoLegalMoves(): Move[];
+    public abstract getPseudoLegalMoves(): Promise<Move[]>;
 
     /**
      * List all the legal moves
      * @returns {Move[]} All legal moves
      */
-    public getLegalMoves(): Move[] {
-        const pseudoLegalMoves = this.getPseudoLegalMoves();
+    public async getLegalMoves(): Promise<Move[]> {
+        const pseudoLegalMoves = await this.getPseudoLegalMoves();
         const legalMoves       = [] as Move[];
 
         for (const pseudoLegalMove of pseudoLegalMoves) {
             // Try each pseudo-legal move
-            this.board.tryMove(pseudoLegalMove, (board: Chessboard) => {
-                let legalMove = true;
+            this.board.applyMove(pseudoLegalMove);
 
-                for (const opponentPiece of board.getPieces(getOppositeColor(this.color))) {
-                    // For each opponent piece, we check if a move can take the king
-                    const opponentMoves = opponentPiece.getPseudoLegalMoves();
-                    for (const opponentMove of opponentMoves) {
-                        // eslint-disable-next-line
-                        board.tryMove(opponentMove, (nextBoard: Chessboard) => {
-                            let kingStillAlive    = false;
-                            const remainingPieces = nextBoard.getPieces(this.color);
-                            for (const remainingPiece of remainingPieces) {
-                                if (remainingPiece.type === Type.King) {
-                                    // Even after this move, our king is still alive
-                                    kingStillAlive = true;
-                                    break;
-                                }
-                            }
+            let legalMove = true;
+            const board = this.board;
 
-                            if (!kingStillAlive) {
-                                // After Opponent#1's move there's no king left, so Opponent#0's move is not legal
-                                legalMove = false;
-                            }
-                        });
+            for (const opponentPiece of board.getPieces(getOppositeColor(this.color))) {
+                // For each opponent piece, we check if a move can take the king
+                const opponentMoves = await opponentPiece.getPseudoLegalMoves();
+                for (const opponentMove of opponentMoves) {
+                    board.applyMove(opponentMove);
 
-                        if (!legalMove) {
+                    let kingStillAlive    = false;
+                    const remainingPieces = board.getPieces(this.color);
+                    for (const remainingPiece of remainingPieces) {
+                        if (remainingPiece.type === Type.King) {
+                            // Even after this move, our king is still alive
+                            kingStillAlive = true;
                             break;
                         }
                     }
+
+                    if (!kingStillAlive) {
+                        // After Opponent#1's move there's no king left, so Opponent#0's move is not legal
+                        legalMove = false;
+                    }
+
+                    board.revertMove(opponentMove);
 
                     if (!legalMove) {
                         break;
                     }
                 }
 
-                if (legalMove) {
-                    legalMoves.push(pseudoLegalMove);
+                if (!legalMove) {
+                    break;
                 }
-            });
+            }
+
+            this.board.revertMove(pseudoLegalMove);
+
+            if (legalMove) {
+                legalMoves.push(pseudoLegalMove);
+            }
         }
 
         return legalMoves;
@@ -302,7 +306,7 @@ abstract class Piece {
      * @param {number} limit Limit
      * @protected
      */
-    protected _checkStraightLines(direction: Position, moves: Move[], limit = Infinity): void {
+    protected async _checkStraightLines(direction: Position, moves: Move[], limit = Infinity): Promise<void> {
         let i   = 1;
         let res = MoveResult.Occupied;
         while (i <= limit && res === MoveResult.Occupied) {

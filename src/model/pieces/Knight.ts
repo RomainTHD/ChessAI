@@ -11,7 +11,7 @@ import {
 class Knight extends Piece {
     public readonly type = Type.Knight;
 
-    public getPseudoLegalMoves(): Move[] {
+    public async getPseudoLegalMoves(): Promise<Move[]> {
         const moves   = [] as Move[];
         const offsets = [] as Position[];
 
