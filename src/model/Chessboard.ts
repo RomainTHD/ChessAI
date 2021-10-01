@@ -449,6 +449,8 @@ class Chessboard {
                     ++col;
                 }
             }
+
+            assert(col === this.NB_COLS, "Invalid FEN number of columns");
         }
 
         // Active color
